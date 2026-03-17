@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojya Project HP</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // ここにコピーした React のコードを貼り付けます
+        const { useState, useRef } = React;
+
+        const App = () => {
+            return (
+                <div className="min-h-screen bg-zinc-900 text-white p-8">
+                    <header className="max-w-4xl mx-auto border-b border-zinc-800 pb-8">
+                        <h1 className="text-4xl font-bold tracking-widest">MOJYA PROJECT</h1>
+                        <p className="mt-4 text-zinc-400">建築施工管理・3Dビジュアライゼーション</p>
+                    </header>
+                    <main className="max-w-4xl mx-auto py-12">
+                        <section>
+                            <h2 className="text-2xl mb-4">About</h2>
+                            <p className="text-zinc-300 leading-relaxed">
+                                ここにHPのメインコンテンツが入ります。
+                            </p>
+                        </section>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
