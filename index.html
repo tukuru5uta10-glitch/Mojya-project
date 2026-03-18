@@ -236,12 +236,12 @@ body {
   overflow: hidden; 
 
   background-image: url('鏝6.png');
-  background-size: 150% auto !important; /* スマホ版の拡大率 */
+  background-size: 140% auto !important; /* スマホ版の拡大率 */
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
 
-/* PC版：画像を強制的に上にずらす設定 */
+/* PC版：画像を強制的に「上に」引き上げる設定 */
 @media (min-width: 768px) {
   #about {
     height: 500px !important;
@@ -250,16 +250,17 @@ body {
 
     background-image: url('鏝6.png');
 
-    /* ↓ coverをやめて少し拡大(120%)することで、上下に動く隙間を作ります */
-    background-size: 120% auto !important; 
+    /* 少し拡大して、上下に動かす「のりしろ」を確保します */
+    background-size: 110% auto !important; 
     
-    /* ↓ 0% に近づけるほど画像が上に上がります */
-    background-position: center 0% !important; 
+    /* ↓ ここがポイント！
+       center で左右を真ん中にし、
+       -50px（マイナス）を指定することで画像を上に強制移動させます */
+    background-position: center -50px !important; 
     
     background-repeat: no-repeat !important;
   }
-}
-}#work { padding:4rem 0; background:var(--cream); }
+}}#work { padding:4rem 0; background:var(--cream); }
 .texture-header { padding:0 1.8rem 2.5rem; display:flex; justify-content:space-between; align-items:baseline; }
 .section-label { font-size:0.6rem; letter-spacing:0.4em; color:var(--teak); }
 .texture-grid {
