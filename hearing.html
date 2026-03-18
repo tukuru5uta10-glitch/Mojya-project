@@ -7,7 +7,6 @@
 <title>PWNK Hearing</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
 <style>
@@ -28,14 +27,12 @@ body{
   min-height:100svh;
 }
 
-/* コンテナ */
 .container{
   width:100%;
   max-width:520px;
   padding:40px 20px;
 }
 
-/* タイトル */
 h2{
   font-family:'Cormorant Garamond', serif;
   font-size:30px;
@@ -43,10 +40,12 @@ h2{
   margin-bottom:40px;
 }
 
-/* カード */
 .card{
+  display:flex;
+  align-items:center;
+  gap:12px;
   border-bottom:1px solid var(--teak-light);
-  padding:18px 0;
+  padding:20px 0;
   cursor:pointer;
   transition:0.4s;
   font-size:17px;
@@ -61,7 +60,56 @@ h2{
   border-bottom:1px solid var(--teak);
 }
 
-/* 入力 */
+/* ラジオ */
+.radio{
+  width:18px;
+  height:18px;
+  border:1px solid var(--teak);
+  border-radius:50%;
+  position:relative;
+}
+
+.radio::after{
+  content:"";
+  width:10px;
+  height:10px;
+  background:var(--teak);
+  border-radius:50%;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  transition:0.2s;
+}
+
+.card.selected .radio::after{
+  transform:translate(-50%,-50%) scale(1);
+}
+
+/* チェック */
+.checkbox{
+  width:18px;
+  height:18px;
+  border:1px solid var(--teak);
+  position:relative;
+}
+
+.checkbox::after{
+  content:"";
+  width:10px;
+  height:10px;
+  background:var(--teak);
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  transition:0.2s;
+}
+
+.card.selected .checkbox::after{
+  transform:translate(-50%,-50%) scale(1);
+}
+
 input, textarea{
   width:100%;
   border:none;
@@ -71,7 +119,6 @@ input, textarea{
   font-size:16px;
 }
 
-/* ボタン */
 button{
   margin-top:40px;
   padding:12px 20px;
@@ -93,7 +140,6 @@ button:disabled{
   cursor:not-allowed;
 }
 
-/* 結果 */
 pre{
   white-space:pre-wrap;
   line-height:1.8;
@@ -118,14 +164,16 @@ let data = {
 
 function render(){
   const app = document.getElementById("app");
-
   let html = "";
 
   if(step==="type"){
     html = `
       <h2>工事種別</h2>
       ${["新築","改修","相見積","その他"].map(v=>`
-        <div class="card ${data.type===v?"selected":""}" onclick="setType('${v}')">${v}</div>
+        <div class="card ${data.type===v?"selected":""}" onclick="setType('${v}')">
+          <div class="radio"></div>
+          <div>${v}</div>
+        </div>
       `).join("")}
       <button onclick="go('zip')" ${!data.type?"disabled":""}>次へ</button>
     `;
@@ -143,7 +191,10 @@ function render(){
     html = `
       <h2>素材</h2>
       ${["漆喰","珪藻土","モルタル","モールテックス"].map(v=>`
-        <div class="card ${data.materials.includes(v)?"selected":""}" onclick="toggle('${v}')">${v}</div>
+        <div class="card ${data.materials.includes(v)?"selected":""}" onclick="toggle('${v}')">
+          <div class="checkbox"></div>
+          <div>${v}</div>
+        </div>
       `).join("")}
       <button onclick="go('budget')" ${data.materials.length===0?"disabled":""}>次へ</button>
     `;
@@ -181,7 +232,6 @@ function render(){
     `;
   }
 
-  // GSAP演出
   gsap.to("#app", {
     opacity:0,
     duration:0.2,
@@ -207,6 +257,7 @@ function go(s){ step=s; render(); }
 
 function update(k,v){
   data[k]=v;
+  render(); // ← 修正ポイント
 }
 
 function setType(v){
