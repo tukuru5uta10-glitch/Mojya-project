@@ -244,16 +244,21 @@ body {
 /* PC版（横幅が768px以上のとき）の修正 */
 @media (min-width: 768px) {
   #about {
-    /* ↓ PC版の画像の高さを抑える（ここで上下をカットします） */
-    aspect-ratio: auto !important;
-    height: 500px !important; /* ← この数値をお好みで小さくすると、もっと上下が切れます */
+    /* 領域の高さは今のままキープ */
+    height: 500px !important; 
     min-height: 400px !important;
+    aspect-ratio: auto !important;
 
-    /* PC版では横幅いっぱいにピッタリ合わせる */
+    background-image: url('鏝6.png');
     background-size: cover !important; 
-    background-position: center 30% !important; /* 少しだけ上寄りに表示（お好みで） */
+    
+    /* ↓ ここを「center 30%」から「center 20%」に変更して画像を上に上げます */
+    background-position: center 20% !important; 
+    
+    background-repeat: no-repeat !important;
   }
-}}}}#work { padding:4rem 0; background:var(--cream); }
+}
+}#work { padding:4rem 0; background:var(--cream); }
 .texture-header { padding:0 1.8rem 2.5rem; display:flex; justify-content:space-between; align-items:baseline; }
 .section-label { font-size:0.6rem; letter-spacing:0.4em; color:var(--teak); }
 .texture-grid {
