@@ -241,19 +241,20 @@ body {
   background-repeat: no-repeat !important;
 }
 
-/* PC版（横幅が768px以上のとき）の修正 */
+/* PC版：画像を強制的に上にずらす設定 */
 @media (min-width: 768px) {
   #about {
-    /* 領域の高さは今のままキープ */
-    height: 500px !important; 
+    height: 500px !important;
     min-height: 400px !important;
     aspect-ratio: auto !important;
 
     background-image: url('鏝6.png');
-    background-size: cover !important; 
+
+    /* ↓ coverをやめて少し拡大(120%)することで、上下に動く隙間を作ります */
+    background-size: 120% auto !important; 
     
-    /* ↓ ここを「center 30%」から「center 20%」に変更して画像を上に上げます */
-    background-position: center 5% !important; 
+    /* ↓ 0% に近づけるほど画像が上に上がります */
+    background-position: center 0% !important; 
     
     background-repeat: no-repeat !important;
   }
