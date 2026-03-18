@@ -222,7 +222,7 @@ body {
   text-shadow: 0 1px 6px rgba(0,0,0,0.8), 0 2px 14px rgba(0,0,0,0.6);
 }
 .about-statement em { font-style:italic; color:var(--teak-light); }
-/* 背景領域：画像を少し大きく（拡大）表示する設定 */
+/* スマホ版の設定（今のいい感じをキープ） */
 #about {
   display: flex;
   align-items: center;
@@ -230,29 +230,30 @@ body {
   position: relative;
   width: 100% !important;
   
-  /* 箱の形は今の「いい感じ」をキープ */
+  /* スマホ版の領域（上下をカットした状態） */
   aspect-ratio: 16 / 7 !important; 
   min-height: auto !important;
   overflow: hidden; 
 
   background-image: url('鏝6.png');
-  
-  /* ↓ 100% から 115% に上げることで、画像を少し大きくします */
-  background-size: 140% auto !important; 
-  
+  background-size: 140% auto !important; /* スマホ版の拡大率 */
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
 
-/* PC版の設定 */
+/* PC版（横幅が768px以上のとき）の修正 */
 @media (min-width: 768px) {
   #about {
-    min-height: 55vh !important;
-    aspect-ratio: auto;
-    background-size: cover !important;
+    /* ↓ PC版の画像の高さを抑える（ここで上下をカットします） */
+    aspect-ratio: auto !important;
+    height: 400px !important; /* ← この数値をお好みで小さくすると、もっと上下が切れます */
+    min-height: 400px !important;
+
+    /* PC版では横幅いっぱいにピッタリ合わせる */
+    background-size: cover !important; 
+    background-position: center 30% !important; /* 少しだけ上寄りに表示（お好みで） */
   }
-}
-}}}#work { padding:4rem 0; background:var(--cream); }
+}}}}#work { padding:4rem 0; background:var(--cream); }
 .texture-header { padding:0 1.8rem 2.5rem; display:flex; justify-content:space-between; align-items:baseline; }
 .section-label { font-size:0.6rem; letter-spacing:0.4em; color:var(--teak); }
 .texture-grid {
