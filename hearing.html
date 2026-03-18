@@ -1,0 +1,282 @@
+import React, { useState, useRef } from "react";
+
+// ═══════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════
+const STEPS = ["start", "type", "zip", "material", "docs", "photo", "deadline", "budget", "purpose", "constraint", "result"];
+
+const WORK_TYPES = [
+  { label: "新築・分離発注", sub: "新築物件への左官・塗装工事" },
+  { label: "改修（リフォーム）", sub: "既存建物のリフォーム・補修" },
+  { label: "相見積（他社比較）", sub: "他社との比較検討中" },
+  { label: "その他", sub: "上記に当てはまらない案件" },
+];
+
+const MATERIALS = ["漆喰", "珪藻土", "モルタル", "モールテックス", "その他"];
+
+const INITIAL_DATA = {
+  type: "", typeCustom: "",
+  zip: "",
+  materials: [], materialCustom: "",
+  docs: "", photo: null,
+  deadline: "", budget: "", purpose: "", constraint: "",
+};
+
+// ═══════════════════════════════════════════════
+// COMMON COMPONENTS
+// ═══════════════════════════════════════════════
+const Logo = () => (
+  <div style={{ letterSpacing: "0.25em", fontFamily: "sans-serif", fontWeight: 700, fontSize: "1.5rem", color: "#e8e8e8" }}>
+    PWNK
+  </div>
+);
+
+const TrowelIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+    <path d="M4 26 L16 6 L28 26" stroke="#c8c8c8" strokeWidth="1.5" fill="none" />
+    <path d="M10 26 L10 16 Q16 12 22 16 L22 26" stroke="#c8c8c8" strokeWidth="1.2" fill="none" />
+    <line x1="4" y1="26" x2="28" y2="26" stroke="#888" strokeWidth="1" />
+  </svg>
+);
+
+const ProgressBar = ({ current }) => {
+  const total = STEPS.length - 2;
+  const idx = Math.max(0, STEPS.indexOf(current) - 1);
+  const pct = Math.min(100, (idx / total) * 100);
+  return (
+    <div style={{ width: "100%", height: "2px", background: "#2a2a2a", marginBottom: "2rem" }}>
+      <div style={{ width: `${pct}%`, height: "100%", background: "linear-gradient(90deg,#888,#c8c8c8)", transition: "width 0.5s ease" }} />
+    </div>
+  );
+};
+
+const Label = ({ children }) => (
+  <div style={{ fontSize: "0.7rem", letterSpacing: "0.15em", color: "#666", marginBottom: "0.8rem", textTransform: "uppercase" }}>
+    {children}
+  </div>
+);
+
+const Question = ({ children }) => (
+  <div style={{ fontSize: "1.1rem", color: "#e8e8e8", marginBottom: "1.5rem", lineHeight: 1.6 }}>
+    {children}
+  </div>
+);
+
+const SelectCard = ({ label, sub, selected, onClick }) => (
+  <button onClick={onClick} style={{
+    background: selected ? "#2a2a2a" : "#1a1a1a",
+    border: selected ? "1px solid #c8c8c8" : "1px solid #333",
+    borderRadius: "4px", padding: "1rem 1.2rem", cursor: "pointer",
+    textAlign: "left", transition: "all 0.2s", width: "100%",
+    color: selected ? "#e8e8e8" : "#888",
+  }}>
+    <div style={{ fontSize: "0.9rem", fontWeight: 600 }}>{label}</div>
+    {sub && <div style={{ fontSize: "0.72rem", marginTop: "0.25rem", color: "#555" }}>{sub}</div>}
+  </button>
+);
+
+const CheckCard = ({ label, checked, onChange }) => (
+  <label style={{
+    display: "flex", alignItems: "center", gap: "0.8rem",
+    background: checked ? "#2a2a2a" : "#1a1a1a",
+    border: checked ? "1px solid #c8c8c8" : "1px solid #333",
+    borderRadius: "4px", padding: "1rem 1.2rem", cursor: "pointer",
+    color: checked ? "#e8e8e8" : "#888",
+  }}>
+    <input type="checkbox" checked={checked} onChange={onChange} style={{ accentColor: "#c8c8c8" }} />
+    <span style={{ fontSize: "0.9rem", fontWeight: 600 }}>{label}</span>
+  </label>
+);
+
+const TextInput = ({ placeholder, value, onChange, type = "text" }) => (
+  <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
+    style={{
+      width: "100%", background: "#111", border: "1px solid #333", borderRadius: "4px",
+      padding: "0.85rem 1rem", color: "#e8e8e8", fontSize: "0.9rem", outline: "none", boxSizing: "border-box"
+    }} />
+);
+
+const FreeText = ({ placeholder, value, onChange, rows = 3 }) => (
+  <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={rows}
+    style={{
+      width: "100%", background: "#111", border: "1px solid #333", borderRadius: "4px",
+      padding: "0.85rem 1rem", color: "#e8e8e8", fontSize: "0.9rem", outline: "none", resize: "vertical", boxSizing: "border-box"
+    }} />
+);
+
+const NextBtn = ({ onClick, label = "次へ →", disabled }) => (
+  <button onClick={onClick} disabled={disabled} style={{
+    marginTop: "1.5rem", background: disabled ? "#222" : "#c8c8c8", color: disabled ? "#444" : "#111",
+    border: "none", borderRadius: "4px", padding: "0.9rem 2.5rem", fontWeight: 700, cursor: disabled ? "not-allowed" : "pointer"
+  }}>{label}</button>
+);
+
+const SummaryRow = ({ label, value }) => (
+  <div style={{ display: "flex", justifyContent: "space-between", padding: "0.6rem 0", borderBottom: "1px solid #1e1e1e" }}>
+    <span style={{ fontSize: "0.78rem", color: "#555" }}>{label}</span>
+    <span style={{ fontSize: "0.85rem", color: "#c8c8c8", textAlign: "right" }}>{value || "—"}</span>
+  </div>
+);
+
+// ═══════════════════════════════════════════════
+// MAIN APP COMPONENT
+// ═══════════════════════════════════════════════
+export default function App() {
+  const [step, setStep] = useState("start");
+  const [data, setData] = useState(INITIAL_DATA);
+  const [copied, setCopied] = useState(false);
+  const fileRef = useRef();
+
+  const go = (s) => setStep(s);
+  const set = (k, v) => setData(p => ({ ...p, [k]: v }));
+  const toggleMaterial = (m) =>
+    set("materials", data.materials.includes(m) ? data.materials.filter(x => x !== m) : [...data.materials, m]);
+
+  const summaryText = () => {
+    const matList = data.materials.map(m => m === "その他" ? `その他（${data.materialCustom}）` : m).join("、");
+    return `【PWNK ヒアリングシート】\n━━━━━━━━━━━━━━━━━\n工事種別　：${data.type}${data.type === "その他" ? `（${data.typeCustom}）` : ""}\n施工場所　：〒${data.zip}\n希望素材　：${matList}\n図書の有無：${data.docs}\n写真提出　：${data.photo ? data.photo.name : "なし"}\n完成期限　：${data.deadline}\n希望予算　：${data.budget}\n依頼目的　：${data.purpose || "未記入"}\n特殊制約　：${data.constraint || "なし"}\n━━━━━━━━━━━━━━━━━\nPWNK｜左官・塗装ブランド`;
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(summaryText()).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    });
+  };
+
+  const renderStep = () => {
+    switch (step) {
+      case "start":
+        return (
+          <div>
+            <Label>HEARING SYSTEM</Label>
+            <div style={{ fontSize: "1.6rem", color: "#e8e8e8", fontWeight: 300, lineHeight: 1.5, marginBottom: "2rem" }}>素材と、<br />対話する。</div>
+            <button onClick={() => go("type")} style={{ background: "#c8c8c8", color: "#0d0d0d", border: "none", borderRadius: "4px", padding: "1rem 2.5rem", fontWeight: 700, cursor: "pointer" }}>ヒアリングをはじめる</button>
+          </div>
+        );
+      case "type":
+        return (
+          <div>
+            <Label>Step 01 — 工事種別</Label>
+            <Question>どのような工事のご依頼ですか？</Question>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+              {WORK_TYPES.map(({ label, sub }) => (
+                <SelectCard key={label} label={label} sub={sub} selected={data.type === label} onClick={() => set("type", label)} />
+              ))}
+            </div>
+            {data.type === "その他" && <div style={{ marginTop: "0.8rem" }}><TextInput placeholder="工事内容" value={data.typeCustom} onChange={v => set("typeCustom", v)} /></div>}
+            <NextBtn onClick={() => go("zip")} disabled={!data.type || (data.type === "その他" && !data.typeCustom)} />
+          </div>
+        );
+      case "zip":
+        return (
+          <div>
+            <Label>Step 02 — 施工場所</Label>
+            <Question>施工場所の郵便番号（7桁）</Question>
+            <TextInput placeholder="例: 5900001" value={data.zip} onChange={v => set("zip", v)} />
+            <NextBtn onClick={() => go("material")} disabled={!data.zip} />
+          </div>
+        );
+      case "material":
+        return (
+          <div>
+            <Label>Step 03 — 希望素材</Label>
+            <Question>使用したい素材（複数選択可）</Question>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+              {MATERIALS.map(m => <CheckCard key={m} label={m} checked={data.materials.includes(m)} onChange={() => toggleMaterial(m)} />)}
+            </div>
+            {data.materials.includes("その他") && <div style={{ marginTop: "0.8rem" }}><TextInput placeholder="素材名" value={data.materialCustom} onChange={v => set("materialCustom", v)} /></div>}
+            <NextBtn onClick={() => go("docs")} disabled={data.materials.length === 0} />
+          </div>
+        );
+      case "docs":
+        return (
+          <div>
+            <Label>Step 04 — 図書の有無</Label>
+            <Question>図面や仕様書はお持ちですか？</Question>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+              {["あり（データ）", "あり（紙）", "なし", "確認中"].map(d => <SelectCard key={d} label={d} selected={data.docs === d} onClick={() => set("docs", d)} />)}
+            </div>
+            <NextBtn onClick={() => go("photo")} disabled={!data.docs} />
+          </div>
+        );
+      case "photo":
+        return (
+          <div>
+            <Label>Step 05 — 現状写真</Label>
+            <Question>写真をアップロードしてください。</Question>
+            <div onClick={() => fileRef.current.click()} style={{ border: "1px dashed #333", padding: "2rem", textAlign: "center", cursor: "pointer", background: "#111" }}>
+              {data.photo ? <span>📎 {data.photo.name}</span> : <span>タップして写真を選択</span>}
+            </div>
+            <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={e => set("photo", e.target.files[0])} />
+            <div style={{ marginTop: "1rem" }}><button onClick={() => go("deadline")} style={{ background: "none", border: "none", color: "#555", textDecoration: "underline", cursor: "pointer" }}>写真なしで次へ →</button></div>
+          </div>
+        );
+      case "deadline":
+        return (
+          <div>
+            <Label>Step 06 — 完成期限</Label>
+            <Question>希望の完成時期</Question>
+            <input type="date" value={data.deadline} onChange={e => set("deadline", e.target.value)} style={{ width: "100%", background: "#111", border: "1px solid #333", color: "#e8e8e8", padding: "0.85rem", colorScheme: "dark" }} />
+            <NextBtn onClick={() => go("budget")} disabled={!data.deadline} />
+          </div>
+        );
+      case "budget":
+        return (
+          <div>
+            <Label>Step 07 — 希望予算</Label>
+            <Question>予算の目安（例：80万円以内）</Question>
+            <TextInput placeholder="予算目安" value={data.budget} onChange={v => set("budget", v)} />
+            <NextBtn onClick={() => go("purpose")} disabled={!data.budget} />
+          </div>
+        );
+      case "purpose":
+        return (
+          <div>
+            <Label>Step 08 — 依頼目的</Label>
+            <Question>こだわりや背景を教えてください。</Question>
+            <FreeText placeholder="こだわりなど" value={data.purpose} onChange={v => set("purpose", v)} />
+            <NextBtn onClick={() => go("constraint")} label="次へ →（スキップ可）" />
+          </div>
+        );
+      case "constraint":
+        return (
+          <div>
+            <Label>Step 09 — 特殊制約</Label>
+            <Question>搬入制限や夜間作業などの特記事項</Question>
+            <FreeText placeholder="特記事項" value={data.constraint} onChange={v => set("constraint", v)} />
+            <NextBtn onClick={() => go("result")} label="送信内容を確認する →" />
+          </div>
+        );
+      case "result":
+        return (
+          <div>
+            <Label>HEARING REPORT</Label>
+            <div style={{ background: "#0f0f0f", border: "1px solid #222", padding: "1.2rem", marginBottom: "1.5rem" }}>
+              <SummaryRow label="工事種別" value={data.type === "その他" ? data.typeCustom : data.type} />
+              <SummaryRow label="施工場所" value={`〒${data.zip}`} />
+              <SummaryRow label="希望素材" value={data.materials.join("、")} />
+              <SummaryRow label="完成期限" value={data.deadline} />
+              <SummaryRow label="希望予算" value={data.budget} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+              <button onClick={handleCopy} style={{ background: copied ? "#333" : "#c8c8c8", color: "#0d0d0d", padding: "1rem", fontWeight: 700, border: "none" }}>{copied ? "✓ コピーしました" : "📋 内容をコピーする"}</button>
+              <a href="https://line.me/R/ti/p/@pwnk2010" target="_blank" rel="noopener noreferrer" style={{ background: "#06C755", color: "#fff", padding: "1rem", textAlign: "center", textDecoration: "none", fontWeight: 700, borderRadius: "4px" }}>LINE公式アカウントで送信</a>
+            </div>
+          </div>
+        );
+      default: return null;
+    }
+  };
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#0d0d0d", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem 1rem", fontFamily: "sans-serif", color: "#c8c8c8" }}>
+      <div style={{ width: "100%", maxWidth: "480px", background: "#141414", border: "1px solid #222", borderRadius: "6px", padding: "2rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}><Logo /><TrowelIcon /></div>
+        {step !== "start" && step !== "result" && <ProgressBar current={step} />}
+        {renderStep()}
+      </div>
+      <div style={{ marginTop: "1.5rem", fontSize: "0.7rem", color: "#2a2a2a", letterSpacing: "0.15em" }}>PWNK — 素材と対話する。</div>
+    </div>
+  );
+}
