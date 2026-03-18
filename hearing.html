@@ -3,146 +3,160 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PWNK ヒアリング</title>
+
+<title>PWNK Hearing</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <style>
+:root{
+  --cream:#F5F0E8;
+  --teak:#8B5E3C;
+  --teak-light:#C8A98D;
+}
+
 body{
   margin:0;
-  background:#0d0d0d;
-  font-family:'Helvetica Neue','Noto Sans JP',sans-serif;
-  color:#c8c8c8;
+  font-family:'Noto Sans JP', sans-serif;
+  background:var(--cream);
+  color:#333;
+  overflow-x:hidden;
+}
+
+/* セクション */
+.section{
+  height:100vh;
   display:flex;
+  flex-direction:column;
   justify-content:center;
-  align-items:center;
-  min-height:100vh;
+  padding:0 10%;
 }
-.container{
+
+/* タイトル */
+h1,h2{
+  font-family:'Cormorant Garamond', serif;
+  font-weight:300;
+}
+
+/* カード */
+.card{
+  border-bottom:1px solid var(--teak-light);
+  padding:15px 0;
+  cursor:pointer;
+  transition:0.4s;
+}
+
+.card:hover{
+  color:var(--teak);
+}
+
+.selected{
+  color:var(--teak);
+  border-bottom:1px solid var(--teak);
+}
+
+/* 入力 */
+input,textarea{
   width:100%;
-  max-width:480px;
-  background:#141414;
-  border:1px solid #222;
-  border-radius:6px;
-  padding:2rem;
+  border:none;
+  border-bottom:1px solid var(--teak-light);
+  background:transparent;
+  padding:10px 0;
+  font-size:16px;
 }
+
+/* 最後 */
+.result{
+  white-space:pre-wrap;
+  line-height:1.8;
+  margin-top:20px;
+}
+
 button{
+  margin-top:30px;
+  padding:12px 20px;
+  border:1px solid var(--teak);
+  background:none;
+  color:var(--teak);
   cursor:pointer;
 }
-.card{
-  background:#1a1a1a;
-  border:1px solid #333;
-  padding:1rem;
-  margin-bottom:0.5rem;
-}
-.card.selected{
-  background:#2a2a2a;
-  border:1px solid #c8c8c8;
-}
-input, textarea{
-  width:100%;
-  padding:10px;
-  background:#111;
-  border:1px solid #333;
+
+button:hover{
+  background:var(--teak);
   color:#fff;
-}
-.next{
-  margin-top:20px;
-  padding:10px;
-  background:#c8c8c8;
-  color:#000;
-  border:none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container" id="app"></div>
+<!-- ① タイトル -->
+<section class="section">
+  <h1>Hearing</h1>
+  <p>空間づくりの第一歩として、いくつかお聞かせください。</p>
+</section>
+
+<!-- ② 工事種別 -->
+<section class="section">
+  <h2>工事種別</h2>
+  <div class="card" onclick="setType('新築')">新築</div>
+  <div class="card" onclick="setType('改修')">改修</div>
+  <div class="card" onclick="setType('相見積')">相見積</div>
+</section>
+
+<!-- ③ 郵便番号 -->
+<section class="section">
+  <h2>郵便番号</h2>
+  <input oninput="data.zip=this.value">
+</section>
+
+<!-- ④ 素材 -->
+<section class="section">
+  <h2>素材</h2>
+  <div class="card" onclick="toggle('漆喰')">漆喰</div>
+  <div class="card" onclick="toggle('珪藻土')">珪藻土</div>
+  <div class="card" onclick="toggle('モルタル')">モルタル</div>
+</section>
+
+<!-- ⑤ 予算 -->
+<section class="section">
+  <h2>ご予算</h2>
+  <input oninput="data.budget=this.value">
+</section>
+
+<!-- ⑥ 要望 -->
+<section class="section">
+  <h2>ご要望</h2>
+  <textarea oninput="data.note=this.value"></textarea>
+</section>
+
+<!-- ⑦ 結果 -->
+<section class="section">
+  <h2>確認</h2>
+  <div class="result" id="result"></div>
+
+  <button onclick="copy()">コピー</button>
+
+  <a href="https://line.me/R/ti/p/@pwnk2010" target="_blank">
+    <button>LINEで送る</button>
+  </a>
+</section>
 
 <script>
-let step = "start";
-
 let data = {
   type:"",
   zip:"",
   materials:[],
   budget:"",
+  note:""
 };
-
-function render(){
-  const app = document.getElementById("app");
-
-  if(step==="start"){
-    app.innerHTML = `
-      <h2>ヒアリング開始</h2>
-      <button onclick="go('type')">スタート</button>
-    `;
-  }
-
-  if(step==="type"){
-    app.innerHTML = `
-      <h3>工事種別</h3>
-      ${["新築","改修","相見積","その他"].map(v=>`
-        <div class="card ${data.type===v?"selected":""}" onclick="setType('${v}')">${v}</div>
-      `).join("")}
-      <button class="next" onclick="go('zip')" ${!data.type?"disabled":""}>次へ</button>
-    `;
-  }
-
-  if(step==="zip"){
-    app.innerHTML = `
-      <h3>郵便番号</h3>
-      <input value="${data.zip}" oninput="data.zip=this.value">
-      <button class="next" onclick="go('material')" ${!data.zip?"disabled":""}>次へ</button>
-    `;
-  }
-
-  if(step==="material"){
-    app.innerHTML = `
-      <h3>素材</h3>
-      ${["漆喰","珪藻土","モルタル"].map(v=>`
-        <div class="card ${data.materials.includes(v)?"selected":""}" onclick="toggle('${v}')">${v}</div>
-      `).join("")}
-      <button class="next" onclick="go('budget')" ${data.materials.length===0?"disabled":""}>次へ</button>
-    `;
-  }
-
-  if(step==="budget"){
-    app.innerHTML = `
-      <h3>予算</h3>
-      <input value="${data.budget}" oninput="data.budget=this.value">
-      <button class="next" onclick="go('result')" ${!data.budget?"disabled":""}>次へ</button>
-    `;
-  }
-
-  if(step==="result"){
-    const text = `
-【PWNK ヒアリング】
-工事種別：${data.type}
-郵便番号：${data.zip}
-素材：${data.materials.join("、")}
-予算：${data.budget}
-`;
-
-    app.innerHTML = `
-      <h3>確認</h3>
-      <pre>${text}</pre>
-      <button onclick="copyText()">コピー</button>
-      <br><br>
-      <a href="https://line.me/R/ti/p/@pwnk2010" target="_blank">
-        LINEで送る
-      </a>
-    `;
-  }
-}
-
-function go(s){
-  step = s;
-  render();
-}
 
 function setType(v){
   data.type = v;
-  render();
+  highlight();
 }
 
 function toggle(v){
@@ -151,16 +165,49 @@ function toggle(v){
   }else{
     data.materials.push(v);
   }
-  render();
+  highlight();
 }
 
-function copyText(){
-  const text = document.querySelector("pre").innerText;
-  navigator.clipboard.writeText(text);
+function highlight(){
+  document.querySelectorAll(".card").forEach(el=>{
+    el.classList.remove("selected");
+    if(data.type === el.innerText || data.materials.includes(el.innerText)){
+      el.classList.add("selected");
+    }
+  });
+}
+
+function generate(){
+  return `【PWNK ヒアリング】
+工事種別：${data.type}
+郵便番号：${data.zip}
+素材：${data.materials.join("、")}
+予算：${data.budget}
+要望：${data.note}`;
+}
+
+function copy(){
+  navigator.clipboard.writeText(generate());
   alert("コピーしました");
 }
 
-render();
+/* スクロール演出 */
+gsap.utils.toArray(".section").forEach(sec=>{
+  gsap.from(sec,{
+    opacity:0,
+    y:50,
+    duration:1,
+    scrollTrigger:{
+      trigger:sec,
+      start:"top 80%"
+    }
+  });
+});
+
+/* 結果更新 */
+setInterval(()=>{
+  document.getElementById("result").innerText = generate();
+},500);
 </script>
 
 </body>
