@@ -224,30 +224,33 @@ body {
 .about-statement em { font-style:italic; color:var(--teak-light); }
 /* 背景画像：左右を画面にピッタリ合わせる設定 */
 /* 背景領域の修正：画像がピッタリ収まるように調整 */
+/* 背景領域の修正：上下を少しカット */
 #about {
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   width: 100% !important;
+  min-height: auto !important;
   
-  /* ↓ ここがポイント！固定の高さ（vh）をやめて、画像に合わせて伸縮させます */
-  min-height: auto !important; 
-  aspect-ratio: 16 / 9; /* ← 鏝画像の縦横比に合わせて 16/9 や 4/3 など調整してください */
+  /* ↓ ここを 16 / 9 から 16 / 7 などに変えることで、
+     画像を横長（上下がカットされた状態）にします */
+  aspect-ratio: 16 / 7 !important; /* ← 鏝がもっと細長く見えるように調整 */
 
   background-image: url('鏝6.png');
-  background-size: 100% 100% !important; /* 上下左右に隙間なく貼り付け */
-  background-position: center !important;
+  background-size: 100% auto !important; /* 横幅100%固定・高さ自動 */
+  background-position: center !important; /* 画像の真ん中を基準にする */
   background-repeat: no-repeat !important;
 }
 
-/* PCで見るときは、今まで通り迫力のある高さにする */
+/* PC版の迫力ある表示は維持します */
 @media (min-width: 768px) {
   #about {
-    min-height: 50vh !important;
+    min-height: 55vh !important;
     aspect-ratio: auto;
     background-size: cover !important;
   }
+}
 }}}#work { padding:4rem 0; background:var(--cream); }
 .texture-header { padding:0 1.8rem 2.5rem; display:flex; justify-content:space-between; align-items:baseline; }
 .section-label { font-size:0.6rem; letter-spacing:0.4em; color:var(--teak); }
