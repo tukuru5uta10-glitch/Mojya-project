@@ -1,282 +1,430 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 
 // ═══════════════════════════════════════════════
 // CONSTANTS
 // ═══════════════════════════════════════════════
-const STEPS = ["start", "type", "zip", "material", "docs", "photo", "deadline", "budget", "purpose", "constraint", "result"];
+const STEPS = ["start","type","zip","material","docs","photo","deadline","budget","purpose","constraint","result"];
 
 const WORK_TYPES = [
-  { label: "新築・分離発注", sub: "新築物件への左官・塗装工事" },
-  { label: "改修（リフォーム）", sub: "既存建物のリフォーム・補修" },
-  { label: "相見積（他社比較）", sub: "他社との比較検討中" },
-  { label: "その他", sub: "上記に当てはまらない案件" },
+  { label:"新築・分離発注", sub:"新築物件への左官・塗装工事" },
+  { label:"改修（リフォーム）",  sub:"既存建物のリフォーム・補修" },
+  { label:"相見積（他社比較）", sub:"他社との比較検討中" },
+  { label:"その他",            sub:"上記に当てはまらない案件" },
 ];
 
-const MATERIALS = ["漆喰", "珪藻土", "モルタル", "モールテックス", "その他"];
+const MATERIALS = ["漆喰","珪藻土","モルタル","モールテックス","その他"];
 
 const INITIAL_DATA = {
-  type: "", typeCustom: "",
-  zip: "",
-  materials: [], materialCustom: "",
-  docs: "", photo: null,
-  deadline: "", budget: "", purpose: "", constraint: "",
+  type:"", typeCustom:"",
+  zip:"",
+  materials:[], materialCustom:"",
+  docs:"", photo:null,
+  deadline:"", budget:"", purpose:"", constraint:"",
 };
 
 // ═══════════════════════════════════════════════
-// COMMON COMPONENTS
+// COMMON ATOMS
 // ═══════════════════════════════════════════════
 const Logo = () => (
-  <div style={{ letterSpacing: "0.25em", fontFamily: "sans-serif", fontWeight: 700, fontSize: "1.5rem", color: "#e8e8e8" }}>
+  <div style={{letterSpacing:"0.25em",fontFamily:"'Helvetica Neue',sans-serif",fontWeight:700,fontSize:"1.5rem",color:"#e8e8e8"}}>
     PWNK
   </div>
 );
 
 const TrowelIcon = () => (
   <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-    <path d="M4 26 L16 6 L28 26" stroke="#c8c8c8" strokeWidth="1.5" fill="none" />
-    <path d="M10 26 L10 16 Q16 12 22 16 L22 26" stroke="#c8c8c8" strokeWidth="1.2" fill="none" />
-    <line x1="4" y1="26" x2="28" y2="26" stroke="#888" strokeWidth="1" />
+    <path d="M4 26 L16 6 L28 26" stroke="#c8c8c8" strokeWidth="1.5" fill="none"/>
+    <path d="M10 26 L10 16 Q16 12 22 16 L22 26" stroke="#c8c8c8" strokeWidth="1.2" fill="none"/>
+    <line x1="4" y1="26" x2="28" y2="26" stroke="#888" strokeWidth="1"/>
   </svg>
 );
 
 const ProgressBar = ({ current }) => {
   const total = STEPS.length - 2;
-  const idx = Math.max(0, STEPS.indexOf(current) - 1);
-  const pct = Math.min(100, (idx / total) * 100);
+  const idx   = Math.max(0, STEPS.indexOf(current) - 1);
+  const pct   = Math.min(100, (idx / total) * 100);
   return (
-    <div style={{ width: "100%", height: "2px", background: "#2a2a2a", marginBottom: "2rem" }}>
-      <div style={{ width: `${pct}%`, height: "100%", background: "linear-gradient(90deg,#888,#c8c8c8)", transition: "width 0.5s ease" }} />
+    <div style={{width:"100%",height:"2px",background:"#2a2a2a",marginBottom:"2rem"}}>
+      <div style={{width:`${pct}%`,height:"100%",background:"linear-gradient(90deg,#888,#c8c8c8)",transition:"width 0.5s ease"}}/>
     </div>
   );
 };
 
 const Label = ({ children }) => (
-  <div style={{ fontSize: "0.7rem", letterSpacing: "0.15em", color: "#666", marginBottom: "0.8rem", textTransform: "uppercase" }}>
+  <div style={{fontSize:"0.7rem",letterSpacing:"0.15em",color:"#666",marginBottom:"0.8rem",textTransform:"uppercase"}}>
     {children}
   </div>
 );
 
 const Question = ({ children }) => (
-  <div style={{ fontSize: "1.1rem", color: "#e8e8e8", marginBottom: "1.5rem", lineHeight: 1.6 }}>
+  <div style={{fontSize:"1.1rem",color:"#e8e8e8",marginBottom:"1.5rem",lineHeight:1.6,fontWeight:400}}>
     {children}
   </div>
 );
 
 const SelectCard = ({ label, sub, selected, onClick }) => (
   <button onClick={onClick} style={{
-    background: selected ? "#2a2a2a" : "#1a1a1a",
-    border: selected ? "1px solid #c8c8c8" : "1px solid #333",
-    borderRadius: "4px", padding: "1rem 1.2rem", cursor: "pointer",
-    textAlign: "left", transition: "all 0.2s", width: "100%",
-    color: selected ? "#e8e8e8" : "#888",
+    background:selected?"#2a2a2a":"#1a1a1a",
+    border:selected?"1px solid #c8c8c8":"1px solid #333",
+    borderRadius:"4px",padding:"1rem 1.2rem",cursor:"pointer",
+    textAlign:"left",transition:"all 0.2s",width:"100%",
+    color:selected?"#e8e8e8":"#888",
   }}>
-    <div style={{ fontSize: "0.9rem", fontWeight: 600 }}>{label}</div>
-    {sub && <div style={{ fontSize: "0.72rem", marginTop: "0.25rem", color: "#555" }}>{sub}</div>}
+    <div style={{fontSize:"0.9rem",fontWeight:600}}>{label}</div>
+    {sub && <div style={{fontSize:"0.72rem",marginTop:"0.25rem",color:"#555"}}>{sub}</div>}
   </button>
 );
 
 const CheckCard = ({ label, checked, onChange }) => (
   <label style={{
-    display: "flex", alignItems: "center", gap: "0.8rem",
-    background: checked ? "#2a2a2a" : "#1a1a1a",
-    border: checked ? "1px solid #c8c8c8" : "1px solid #333",
-    borderRadius: "4px", padding: "1rem 1.2rem", cursor: "pointer",
-    color: checked ? "#e8e8e8" : "#888",
+    display:"flex",alignItems:"center",gap:"0.8rem",
+    background:checked?"#2a2a2a":"#1a1a1a",
+    border:checked?"1px solid #c8c8c8":"1px solid #333",
+    borderRadius:"4px",padding:"1rem 1.2rem",cursor:"pointer",
+    transition:"all 0.2s",color:checked?"#e8e8e8":"#888",
   }}>
-    <input type="checkbox" checked={checked} onChange={onChange} style={{ accentColor: "#c8c8c8" }} />
-    <span style={{ fontSize: "0.9rem", fontWeight: 600 }}>{label}</span>
+    <input type="checkbox" checked={checked} onChange={onChange}
+      style={{accentColor:"#c8c8c8",width:"1rem",height:"1rem"}}/>
+    <span style={{fontSize:"0.9rem",fontWeight:600}}>{label}</span>
   </label>
 );
 
-const TextInput = ({ placeholder, value, onChange, type = "text" }) => (
-  <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-    style={{
-      width: "100%", background: "#111", border: "1px solid #333", borderRadius: "4px",
-      padding: "0.85rem 1rem", color: "#e8e8e8", fontSize: "0.9rem", outline: "none", boxSizing: "border-box"
-    }} />
+const TextInput = ({ placeholder, value, onChange, type="text" }) => (
+  <input type={type} value={value} onChange={e=>onChange(e.target.value)}
+    placeholder={placeholder} style={{
+      width:"100%",background:"#111",border:"1px solid #333",borderRadius:"4px",
+      padding:"0.85rem 1rem",color:"#e8e8e8",fontSize:"0.9rem",outline:"none",
+      boxSizing:"border-box",fontFamily:"inherit",
+    }}/>
 );
 
-const FreeText = ({ placeholder, value, onChange, rows = 3 }) => (
-  <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={rows}
-    style={{
-      width: "100%", background: "#111", border: "1px solid #333", borderRadius: "4px",
-      padding: "0.85rem 1rem", color: "#e8e8e8", fontSize: "0.9rem", outline: "none", resize: "vertical", boxSizing: "border-box"
-    }} />
+const FreeText = ({ placeholder, value, onChange, rows=3 }) => (
+  <textarea value={value} onChange={e=>onChange(e.target.value)}
+    placeholder={placeholder} rows={rows} style={{
+      width:"100%",background:"#111",border:"1px solid #333",borderRadius:"4px",
+      padding:"0.85rem 1rem",color:"#e8e8e8",fontSize:"0.9rem",outline:"none",
+      resize:"vertical",boxSizing:"border-box",fontFamily:"inherit",lineHeight:1.6,
+    }}/>
 );
 
-const NextBtn = ({ onClick, label = "次へ →", disabled }) => (
+const NextBtn = ({ onClick, label="次へ →", disabled }) => (
   <button onClick={onClick} disabled={disabled} style={{
-    marginTop: "1.5rem", background: disabled ? "#222" : "#c8c8c8", color: disabled ? "#444" : "#111",
-    border: "none", borderRadius: "4px", padding: "0.9rem 2.5rem", fontWeight: 700, cursor: disabled ? "not-allowed" : "pointer"
+    marginTop:"1.5rem",
+    background:disabled?"#222":"#c8c8c8",
+    color:disabled?"#444":"#111",
+    border:"none",borderRadius:"4px",padding:"0.9rem 2.5rem",
+    fontSize:"0.9rem",fontWeight:700,
+    cursor:disabled?"not-allowed":"pointer",
+    letterSpacing:"0.1em",transition:"all 0.2s",
   }}>{label}</button>
 );
 
 const SummaryRow = ({ label, value }) => (
-  <div style={{ display: "flex", justifyContent: "space-between", padding: "0.6rem 0", borderBottom: "1px solid #1e1e1e" }}>
-    <span style={{ fontSize: "0.78rem", color: "#555" }}>{label}</span>
-    <span style={{ fontSize: "0.85rem", color: "#c8c8c8", textAlign: "right" }}>{value || "—"}</span>
+  <div style={{display:"flex",justifyContent:"space-between",padding:"0.6rem 0",borderBottom:"1px solid #1e1e1e"}}>
+    <span style={{fontSize:"0.78rem",color:"#555",letterSpacing:"0.1em",textTransform:"uppercase"}}>{label}</span>
+    <span style={{fontSize:"0.85rem",color:"#c8c8c8",maxWidth:"60%",textAlign:"right"}}>{value||"—"}</span>
   </div>
 );
 
 // ═══════════════════════════════════════════════
-// MAIN APP COMPONENT
+// SHELL
+// ═══════════════════════════════════════════════
+const Shell = ({ step, children }) => (
+  <div style={{
+    minHeight:"100vh",background:"#0d0d0d",display:"flex",flexDirection:"column",
+    alignItems:"center",justifyContent:"center",padding:"2rem 1rem",
+    fontFamily:"'Helvetica Neue','Noto Sans JP',sans-serif",color:"#c8c8c8",
+  }}>
+    <div style={{
+      width:"100%",maxWidth:"480px",background:"#141414",
+      border:"1px solid #222",borderRadius:"6px",padding:"2rem 2rem 2.5rem",
+    }}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"2rem"}}>
+        <Logo/><TrowelIcon/>
+      </div>
+      {step!=="start" && step!=="result" && <ProgressBar current={step}/>}
+      {children}
+    </div>
+    <div style={{marginTop:"1.5rem",fontSize:"0.7rem",color:"#2a2a2a",letterSpacing:"0.15em"}}>
+      PWNK — 素材と対話する。
+    </div>
+  </div>
+);
+
+// ═══════════════════════════════════════════════
+// STEPS
+// ═══════════════════════════════════════════════
+const StepStart = ({ go }) => (
+  <div>
+    <div style={{fontSize:"0.7rem",letterSpacing:"0.2em",color:"#555",marginBottom:"1rem"}}>HEARING SYSTEM</div>
+    <div style={{fontSize:"1.6rem",color:"#e8e8e8",fontWeight:300,lineHeight:1.5,marginBottom:"0.8rem"}}>
+      素材と、<br/>対話する。
+    </div>
+    <div style={{fontSize:"0.85rem",color:"#555",lineHeight:1.9,marginBottom:"2rem"}}>
+      PWNK の概算見積ヒアリングへようこそ。<br/>
+      いくつかの質問にお答えいただくだけで、完了します。<br/>
+      後ほど内容を確認の上、概算見積をご案内いたします。
+    </div>
+    <button onClick={()=>go("type")} style={{
+      background:"#c8c8c8",color:"#0d0d0d",border:"none",borderRadius:"4px",
+      padding:"1rem 2.5rem",fontSize:"0.95rem",fontWeight:700,cursor:"pointer",letterSpacing:"0.1em",
+    }}>ヒアリングをはじめる</button>
+  </div>
+);
+
+const StepType = ({ data, set, go }) => (
+  <div>
+    <Label>Step 01 — 工事種別</Label>
+    <Question>どのような工事のご依頼ですか？</Question>
+    <div style={{display:"flex",flexDirection:"column",gap:"0.6rem"}}>
+      {WORK_TYPES.map(({label,sub})=>(
+        <SelectCard key={label} label={label} sub={sub}
+          selected={data.type===label} onClick={()=>set("type",label)}/>
+      ))}
+    </div>
+    {data.type==="その他" && (
+      <div style={{marginTop:"0.8rem"}}>
+        <TextInput placeholder="工事の内容を簡単にご記入ください"
+          value={data.typeCustom} onChange={v=>set("typeCustom",v)}/>
+      </div>
+    )}
+    <NextBtn onClick={()=>go("zip")}
+      disabled={!data.type||(data.type==="その他"&&!data.typeCustom)}/>
+  </div>
+);
+
+const StepZip = ({ data, set, go }) => (
+  <div>
+    <Label>Step 02 — 施工場所</Label>
+    <Question>施工場所の郵便番号を教えてください。</Question>
+    <div style={{fontSize:"0.78rem",color:"#555",marginBottom:"1rem"}}>例：5900001（ハイフン不要）</div>
+    <TextInput placeholder="郵便番号" value={data.zip} onChange={v=>set("zip",v)}/>
+    <NextBtn onClick={()=>go("material")} disabled={!data.zip}/>
+  </div>
+);
+
+const StepMaterial = ({ data, set, toggle, go }) => (
+  <div>
+    <Label>Step 03 — 希望素材</Label>
+    <Question>使用したい素材をすべて選んでください。</Question>
+    <div style={{display:"flex",flexDirection:"column",gap:"0.6rem"}}>
+      {MATERIALS.map(m=>(
+        <CheckCard key={m} label={m}
+          checked={data.materials.includes(m)}
+          onChange={()=>toggle(m)}/>
+      ))}
+    </div>
+    {data.materials.includes("その他") && (
+      <div style={{marginTop:"0.8rem"}}>
+        <TextInput placeholder="素材名をご記入ください"
+          value={data.materialCustom} onChange={v=>set("materialCustom",v)}/>
+      </div>
+    )}
+    <NextBtn onClick={()=>go("docs")}
+      disabled={data.materials.length===0||(data.materials.includes("その他")&&!data.materialCustom)}/>
+  </div>
+);
+
+const StepDocs = ({ data, set, go }) => (
+  <div>
+    <Label>Step 04 — 図書の有無</Label>
+    <Question>
+      {data.type==="新築・分離発注"
+        ?"平面図・展開図・仕様書などの図面はお持ちですか？"
+        :"現状の図面や仕様書はありますか？"}
+    </Question>
+    {data.type==="改修（リフォーム）" && (
+      <div style={{fontSize:"0.8rem",color:"#666",marginBottom:"1rem",padding:"0.8rem",border:"1px solid #2a2a2a",borderRadius:"4px"}}>
+        💡 改修工事では現状写真が特に重要です。次のステップでご提出をお願いします。
+      </div>
+    )}
+    <div style={{display:"flex",flexDirection:"column",gap:"0.6rem"}}>
+      {["あり（デジタルデータ）","あり（紙のみ）","なし","確認中"].map(d=>(
+        <SelectCard key={d} label={d} selected={data.docs===d} onClick={()=>set("docs",d)}/>
+      ))}
+    </div>
+    <NextBtn onClick={()=>go("photo")} disabled={!data.docs}/>
+  </div>
+);
+
+const StepPhoto = ({ data, set, go, fileRef }) => (
+  <div>
+    <Label>Step 05 — 現状写真</Label>
+    <Question>施工箇所の写真をアップロードしてください。</Question>
+    <div style={{fontSize:"0.78rem",color:"#555",marginBottom:"1rem"}}>
+      {data.type==="新築・分離発注"?"図面写真でも構いません。":"現状の状態が分かる写真をお願いします。"}
+    </div>
+    <div onClick={()=>fileRef.current.click()} style={{
+      border:"1px dashed #333",borderRadius:"4px",padding:"2rem",
+      textAlign:"center",cursor:"pointer",background:"#111",
+    }}>
+      {data.photo
+        ?<div style={{color:"#c8c8c8",fontSize:"0.85rem"}}>📎 {data.photo.name}</div>
+        :<div style={{color:"#444",fontSize:"0.85rem"}}>
+          <div style={{fontSize:"1.5rem",marginBottom:"0.5rem"}}>＋</div>
+          タップして写真を選択
+        </div>
+      }
+    </div>
+    <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}}
+      onChange={e=>set("photo",e.target.files[0]||null)}/>
+    <div style={{marginTop:"0.8rem"}}>
+      <button onClick={()=>go("deadline")} style={{
+        background:"none",border:"none",color:"#555",fontSize:"0.8rem",cursor:"pointer",textDecoration:"underline",
+      }}>写真なしでスキップ →</button>
+    </div>
+    {data.photo && <NextBtn onClick={()=>go("deadline")}/>}
+  </div>
+);
+
+const StepDeadline = ({ data, set, go }) => (
+  <div>
+    <Label>Step 06 — 完成期限</Label>
+    <Question>希望の完成時期を教えてください。</Question>
+    <input type="date" value={data.deadline} onChange={e=>set("deadline",e.target.value)}
+      style={{
+        width:"100%",background:"#111",border:"1px solid #333",borderRadius:"4px",
+        padding:"0.85rem 1rem",color:data.deadline?"#e8e8e8":"#555",
+        fontSize:"0.9rem",outline:"none",boxSizing:"border-box",
+        fontFamily:"inherit",colorScheme:"dark",
+      }}/>
+    <NextBtn onClick={()=>go("budget")} disabled={!data.deadline}/>
+  </div>
+);
+
+const StepBudget = ({ data, set, go }) => (
+  <div>
+    <Label>Step 07 — 希望予算</Label>
+    <Question>ご予算の目安を教えてください。</Question>
+    <TextInput placeholder="例：80万円以内、応相談など"
+      value={data.budget} onChange={v=>set("budget",v)}/>
+    <NextBtn onClick={()=>go("purpose")} disabled={!data.budget}/>
+  </div>
+);
+
+const StepPurpose = ({ data, set, go }) => (
+  <div>
+    <Label>Step 08 — 依頼目的（任意）</Label>
+    <Question>PWNKにご依頼いただいた背景や、こだわりを教えてください。</Question>
+    <FreeText placeholder="例：自然素材にこだわりたい、SNSで作品を見て惚れ込んだ、など"
+      value={data.purpose} onChange={v=>set("purpose",v)} rows={4}/>
+    <NextBtn onClick={()=>go("constraint")} label="次へ →（スキップ可）"/>
+  </div>
+);
+
+const StepConstraint = ({ data, set, go }) => (
+  <div>
+    <Label>Step 09 — 特殊制約</Label>
+    <Question>搬入経路の制限や夜間作業の必要性など、特記事項はありますか？</Question>
+    <FreeText placeholder="例：エレベーターなし・3F、夜間作業可、養生に制限あり、など"
+      value={data.constraint} onChange={v=>set("constraint",v)} rows={3}/>
+    <NextBtn onClick={()=>go("result")} label="送信内容を確認する →"/>
+  </div>
+);
+
+const StepResult = ({ data, copied, onCopy, onReset }) => {
+  const matLabel  = data.materials.map(m=>m==="その他"?`その他（${data.materialCustom}）`:m).join("、");
+  const typeLabel = data.type==="その他"?`その他（${data.typeCustom}）`:data.type;
+  return (
+    <div>
+      <div style={{fontSize:"0.7rem",letterSpacing:"0.2em",color:"#555",marginBottom:"1.2rem"}}>HEARING REPORT</div>
+      <div style={{fontSize:"1.1rem",color:"#e8e8e8",marginBottom:"0.4rem",fontWeight:300}}>ヒアリング完了</div>
+      <div style={{fontSize:"0.8rem",color:"#555",marginBottom:"1.8rem",lineHeight:1.7}}>
+        ご入力ありがとうございます。内容をご確認の上、LINEでお送りください。<br/>
+        後ほど担当者より概算見積をご案内いたします。
+      </div>
+      <div style={{background:"#0f0f0f",border:"1px solid #222",borderRadius:"4px",padding:"1.2rem",marginBottom:"1.5rem"}}>
+        <SummaryRow label="工事種別" value={typeLabel}/>
+        <SummaryRow label="施工場所" value={`〒${data.zip}`}/>
+        <SummaryRow label="希望素材" value={matLabel}/>
+        <SummaryRow label="図書"     value={data.docs}/>
+        <SummaryRow label="写真"     value={data.photo?data.photo.name:"なし"}/>
+        <SummaryRow label="完成期限" value={data.deadline}/>
+        <SummaryRow label="希望予算" value={data.budget}/>
+        <SummaryRow label="依頼目的" value={data.purpose||"未記入"}/>
+        <SummaryRow label="特殊制約" value={data.constraint||"なし"}/>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:"0.8rem"}}>
+        <button onClick={onCopy} style={{
+          background:copied?"#333":"#c8c8c8",
+          color:copied?"#888":"#0d0d0d",
+          border:"none",borderRadius:"4px",padding:"1rem",
+          fontSize:"0.9rem",fontWeight:700,cursor:"pointer",
+          letterSpacing:"0.05em",transition:"all 0.3s",
+        }}>{copied?"✓ コピーしました":"📋 内容をコピーする"}</button>
+        <a href="https://line.me/R/ti/p/@pwnk2010" target="_blank" rel="noopener noreferrer" style={{
+          display:"block",background:"#06C755",color:"#fff",border:"none",
+          borderRadius:"4px",padding:"1rem",fontSize:"0.9rem",fontWeight:700,
+          cursor:"pointer",letterSpacing:"0.05em",textAlign:"center",textDecoration:"none",
+        }}>LINE公式アカウントを開いて送信する →</a>
+      </div>
+      <button onClick={onReset} style={{
+        marginTop:"1.5rem",background:"none",border:"none",
+        color:"#444",fontSize:"0.78rem",cursor:"pointer",textDecoration:"underline",
+      }}>最初からやり直す</button>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════
+// APP
 // ═══════════════════════════════════════════════
 export default function App() {
-  const [step, setStep] = useState("start");
-  const [data, setData] = useState(INITIAL_DATA);
+  const [step, setStep]   = useState("start");
+  const [data, setData]   = useState(INITIAL_DATA);
   const [copied, setCopied] = useState(false);
   const fileRef = useRef();
 
-  const go = (s) => setStep(s);
-  const set = (k, v) => setData(p => ({ ...p, [k]: v }));
+  const go  = (s) => setStep(s);
+  const set = (k, v) => setData(p=>({...p,[k]:v}));
   const toggleMaterial = (m) =>
-    set("materials", data.materials.includes(m) ? data.materials.filter(x => x !== m) : [...data.materials, m]);
+    set("materials", data.materials.includes(m)
+      ? data.materials.filter(x=>x!==m)
+      : [...data.materials, m]);
 
   const summaryText = () => {
-    const matList = data.materials.map(m => m === "その他" ? `その他（${data.materialCustom}）` : m).join("、");
-    return `【PWNK ヒアリングシート】\n━━━━━━━━━━━━━━━━━\n工事種別　：${data.type}${data.type === "その他" ? `（${data.typeCustom}）` : ""}\n施工場所　：〒${data.zip}\n希望素材　：${matList}\n図書の有無：${data.docs}\n写真提出　：${data.photo ? data.photo.name : "なし"}\n完成期限　：${data.deadline}\n希望予算　：${data.budget}\n依頼目的　：${data.purpose || "未記入"}\n特殊制約　：${data.constraint || "なし"}\n━━━━━━━━━━━━━━━━━\nPWNK｜左官・塗装ブランド`;
+    const matList = data.materials.map(m=>m==="その他"?`その他（${data.materialCustom}）`:m).join("、");
+    return `【PWNK ヒアリングシート】
+━━━━━━━━━━━━━━━━━
+工事種別　：${data.type}${data.type==="その他"?`（${data.typeCustom}）`:""}
+施工場所　：〒${data.zip}
+希望素材　：${matList}
+図書の有無：${data.docs}
+写真提出　：${data.photo?data.photo.name:"なし"}
+完成期限　：${data.deadline}
+希望予算　：${data.budget}
+依頼目的　：${data.purpose||"未記入"}
+特殊制約　：${data.constraint||"なし"}
+━━━━━━━━━━━━━━━━━
+※後ほど担当者より概算見積をご案内いたします。
+PWNK｜左官・塗装ブランド`;
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(summaryText()).then(() => {
+    navigator.clipboard.writeText(summaryText()).then(()=>{
       setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      setTimeout(()=>setCopied(false), 2500);
     });
   };
 
+  const reset = () => { setStep("start"); setData(INITIAL_DATA); setCopied(false); };
+
   const renderStep = () => {
-    switch (step) {
-      case "start":
-        return (
-          <div>
-            <Label>HEARING SYSTEM</Label>
-            <div style={{ fontSize: "1.6rem", color: "#e8e8e8", fontWeight: 300, lineHeight: 1.5, marginBottom: "2rem" }}>素材と、<br />対話する。</div>
-            <button onClick={() => go("type")} style={{ background: "#c8c8c8", color: "#0d0d0d", border: "none", borderRadius: "4px", padding: "1rem 2.5rem", fontWeight: 700, cursor: "pointer" }}>ヒアリングをはじめる</button>
-          </div>
-        );
-      case "type":
-        return (
-          <div>
-            <Label>Step 01 — 工事種別</Label>
-            <Question>どのような工事のご依頼ですか？</Question>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-              {WORK_TYPES.map(({ label, sub }) => (
-                <SelectCard key={label} label={label} sub={sub} selected={data.type === label} onClick={() => set("type", label)} />
-              ))}
-            </div>
-            {data.type === "その他" && <div style={{ marginTop: "0.8rem" }}><TextInput placeholder="工事内容" value={data.typeCustom} onChange={v => set("typeCustom", v)} /></div>}
-            <NextBtn onClick={() => go("zip")} disabled={!data.type || (data.type === "その他" && !data.typeCustom)} />
-          </div>
-        );
-      case "zip":
-        return (
-          <div>
-            <Label>Step 02 — 施工場所</Label>
-            <Question>施工場所の郵便番号（7桁）</Question>
-            <TextInput placeholder="例: 5900001" value={data.zip} onChange={v => set("zip", v)} />
-            <NextBtn onClick={() => go("material")} disabled={!data.zip} />
-          </div>
-        );
-      case "material":
-        return (
-          <div>
-            <Label>Step 03 — 希望素材</Label>
-            <Question>使用したい素材（複数選択可）</Question>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-              {MATERIALS.map(m => <CheckCard key={m} label={m} checked={data.materials.includes(m)} onChange={() => toggleMaterial(m)} />)}
-            </div>
-            {data.materials.includes("その他") && <div style={{ marginTop: "0.8rem" }}><TextInput placeholder="素材名" value={data.materialCustom} onChange={v => set("materialCustom", v)} /></div>}
-            <NextBtn onClick={() => go("docs")} disabled={data.materials.length === 0} />
-          </div>
-        );
-      case "docs":
-        return (
-          <div>
-            <Label>Step 04 — 図書の有無</Label>
-            <Question>図面や仕様書はお持ちですか？</Question>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-              {["あり（データ）", "あり（紙）", "なし", "確認中"].map(d => <SelectCard key={d} label={d} selected={data.docs === d} onClick={() => set("docs", d)} />)}
-            </div>
-            <NextBtn onClick={() => go("photo")} disabled={!data.docs} />
-          </div>
-        );
-      case "photo":
-        return (
-          <div>
-            <Label>Step 05 — 現状写真</Label>
-            <Question>写真をアップロードしてください。</Question>
-            <div onClick={() => fileRef.current.click()} style={{ border: "1px dashed #333", padding: "2rem", textAlign: "center", cursor: "pointer", background: "#111" }}>
-              {data.photo ? <span>📎 {data.photo.name}</span> : <span>タップして写真を選択</span>}
-            </div>
-            <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={e => set("photo", e.target.files[0])} />
-            <div style={{ marginTop: "1rem" }}><button onClick={() => go("deadline")} style={{ background: "none", border: "none", color: "#555", textDecoration: "underline", cursor: "pointer" }}>写真なしで次へ →</button></div>
-          </div>
-        );
-      case "deadline":
-        return (
-          <div>
-            <Label>Step 06 — 完成期限</Label>
-            <Question>希望の完成時期</Question>
-            <input type="date" value={data.deadline} onChange={e => set("deadline", e.target.value)} style={{ width: "100%", background: "#111", border: "1px solid #333", color: "#e8e8e8", padding: "0.85rem", colorScheme: "dark" }} />
-            <NextBtn onClick={() => go("budget")} disabled={!data.deadline} />
-          </div>
-        );
-      case "budget":
-        return (
-          <div>
-            <Label>Step 07 — 希望予算</Label>
-            <Question>予算の目安（例：80万円以内）</Question>
-            <TextInput placeholder="予算目安" value={data.budget} onChange={v => set("budget", v)} />
-            <NextBtn onClick={() => go("purpose")} disabled={!data.budget} />
-          </div>
-        );
-      case "purpose":
-        return (
-          <div>
-            <Label>Step 08 — 依頼目的</Label>
-            <Question>こだわりや背景を教えてください。</Question>
-            <FreeText placeholder="こだわりなど" value={data.purpose} onChange={v => set("purpose", v)} />
-            <NextBtn onClick={() => go("constraint")} label="次へ →（スキップ可）" />
-          </div>
-        );
-      case "constraint":
-        return (
-          <div>
-            <Label>Step 09 — 特殊制約</Label>
-            <Question>搬入制限や夜間作業などの特記事項</Question>
-            <FreeText placeholder="特記事項" value={data.constraint} onChange={v => set("constraint", v)} />
-            <NextBtn onClick={() => go("result")} label="送信内容を確認する →" />
-          </div>
-        );
-      case "result":
-        return (
-          <div>
-            <Label>HEARING REPORT</Label>
-            <div style={{ background: "#0f0f0f", border: "1px solid #222", padding: "1.2rem", marginBottom: "1.5rem" }}>
-              <SummaryRow label="工事種別" value={data.type === "その他" ? data.typeCustom : data.type} />
-              <SummaryRow label="施工場所" value={`〒${data.zip}`} />
-              <SummaryRow label="希望素材" value={data.materials.join("、")} />
-              <SummaryRow label="完成期限" value={data.deadline} />
-              <SummaryRow label="希望予算" value={data.budget} />
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
-              <button onClick={handleCopy} style={{ background: copied ? "#333" : "#c8c8c8", color: "#0d0d0d", padding: "1rem", fontWeight: 700, border: "none" }}>{copied ? "✓ コピーしました" : "📋 内容をコピーする"}</button>
-              <a href="https://line.me/R/ti/p/@pwnk2010" target="_blank" rel="noopener noreferrer" style={{ background: "#06C755", color: "#fff", padding: "1rem", textAlign: "center", textDecoration: "none", fontWeight: 700, borderRadius: "4px" }}>LINE公式アカウントで送信</a>
-            </div>
-          </div>
-        );
-      default: return null;
+    switch(step) {
+      case "start":      return <StepStart      go={go}/>;
+      case "type":       return <StepType       data={data} set={set} go={go}/>;
+      case "zip":        return <StepZip        data={data} set={set} go={go}/>;
+      case "material":   return <StepMaterial   data={data} set={set} toggle={toggleMaterial} go={go}/>;
+      case "docs":       return <StepDocs       data={data} set={set} go={go}/>;
+      case "photo":      return <StepPhoto      data={data} set={set} go={go} fileRef={fileRef}/>;
+      case "deadline":   return <StepDeadline   data={data} set={set} go={go}/>;
+      case "budget":     return <StepBudget     data={data} set={set} go={go}/>;
+      case "purpose":    return <StepPurpose    data={data} set={set} go={go}/>;
+      case "constraint": return <StepConstraint data={data} set={set} go={go}/>;
+      case "result":     return <StepResult     data={data} copied={copied} onCopy={handleCopy} onReset={reset}/>;
+      default:           return null;
     }
   };
 
-  return (
-    <div style={{ minHeight: "100vh", background: "#0d0d0d", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem 1rem", fontFamily: "sans-serif", color: "#c8c8c8" }}>
-      <div style={{ width: "100%", maxWidth: "480px", background: "#141414", border: "1px solid #222", borderRadius: "6px", padding: "2rem" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}><Logo /><TrowelIcon /></div>
-        {step !== "start" && step !== "result" && <ProgressBar current={step} />}
-        {renderStep()}
-      </div>
-      <div style={{ marginTop: "1.5rem", fontSize: "0.7rem", color: "#2a2a2a", letterSpacing: "0.15em" }}>PWNK — 素材と対話する。</div>
-    </div>
-  );
+  return <Shell step={step}>{renderStep()}</Shell>;
 }
