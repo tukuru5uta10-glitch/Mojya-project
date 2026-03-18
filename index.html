@@ -222,31 +222,32 @@ body {
   text-shadow: 0 1px 6px rgba(0,0,0,0.8), 0 2px 14px rgba(0,0,0,0.6);
 }
 .about-statement em { font-style:italic; color:var(--teak-light); }
-/* 背景領域：上下を数パーセントずつカットする設定 */
+/* 背景領域の修正：スマホ版決定版 */
 #about {
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   width: 100% !important;
-  min-height: 45vh; /* 前回の「いい感じ」の高さに戻しました */
+
+  /* ↓ 16 / 7 に設定することで、上下を少しカットした横長の箱を作ります */
+  aspect-ratio: 16 / 7 !important; 
+  min-height: auto !important;
+  overflow: hidden; /* 箱からはみ出た画像を隠す（これでカットされます） */
 
   background-image: url('鏝6.png');
+  /* ↓ 領域（16/7の箱）を隙間なく埋め尽くす命令 */
   background-size: cover !important; 
   background-position: center !important;
   background-repeat: no-repeat !important;
-
-  /* ↓ ここが重要！上下を5%ずつカットして隠す命令です */
-  clip-path: inset(5% 0 5% 0); 
-  /* 意味：inset(上 右 下 左) の順。5%分だけ内側に切り込みを入れます */
 }
 
-/* PC版の設定 */
+/* PCで見るときは、これまで通りの迫力ある表示を維持 */
 @media (min-width: 768px) {
   #about {
-    min-height: 60vh !important;
-    /* PCではカットしたくない場合は 0% にします */
-    clip-path: inset(0% 0 0% 0);
+    min-height: 55vh !important;
+    aspect-ratio: auto;
+    background-size: cover !important;
   }
 }
 }}}#work { padding:4rem 0; background:var(--cream); }
