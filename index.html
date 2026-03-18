@@ -222,33 +222,31 @@ body {
   text-shadow: 0 1px 6px rgba(0,0,0,0.8), 0 2px 14px rgba(0,0,0,0.6);
 }
 .about-statement em { font-style:italic; color:var(--teak-light); }
-/* 背景画像：左右を画面にピッタリ合わせる設定 */
-/* 背景領域の修正：画像がピッタリ収まるように調整 */
-/* 背景領域の修正：上下を少しカット */
+/* 背景領域：上下を数パーセントずつカットする設定 */
 #about {
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   width: 100% !important;
-  min-height: auto !important;
-  
-  /* ↓ ここを 16 / 9 から 16 / 7 などに変えることで、
-     画像を横長（上下がカットされた状態）にします */
-  aspect-ratio: 16 / 7 !important; /* ← 鏝がもっと細長く見えるように調整 */
+  min-height: 45vh; /* 前回の「いい感じ」の高さに戻しました */
 
   background-image: url('鏝6.png');
-  background-size: 100% auto !important; /* 横幅100%固定・高さ自動 */
-  background-position: center !important; /* 画像の真ん中を基準にする */
+  background-size: cover !important; 
+  background-position: center !important;
   background-repeat: no-repeat !important;
+
+  /* ↓ ここが重要！上下を5%ずつカットして隠す命令です */
+  clip-path: inset(5% 0 5% 0); 
+  /* 意味：inset(上 右 下 左) の順。5%分だけ内側に切り込みを入れます */
 }
 
-/* PC版の迫力ある表示は維持します */
+/* PC版の設定 */
 @media (min-width: 768px) {
   #about {
-    min-height: 55vh !important;
-    aspect-ratio: auto;
-    background-size: cover !important;
+    min-height: 60vh !important;
+    /* PCではカットしたくない場合は 0% にします */
+    clip-path: inset(0% 0 0% 0);
   }
 }
 }}}#work { padding:4rem 0; background:var(--cream); }
