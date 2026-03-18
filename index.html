@@ -222,27 +222,29 @@ body {
   text-shadow: 0 1px 6px rgba(0,0,0,0.8), 0 2px 14px rgba(0,0,0,0.6);
 }
 .about-statement em { font-style:italic; color:var(--teak-light); }
-/* 背景領域の修正：スマホ版決定版 */
+/* 背景領域：画像を少し大きく（拡大）表示する設定 */
 #about {
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   width: 100% !important;
-
-  /* ↓ 16 / 7 に設定することで、上下を少しカットした横長の箱を作ります */
+  
+  /* 箱の形は今の「いい感じ」をキープ */
   aspect-ratio: 16 / 7 !important; 
   min-height: auto !important;
-  overflow: hidden; /* 箱からはみ出た画像を隠す（これでカットされます） */
+  overflow: hidden; 
 
   background-image: url('鏝6.png');
-  /* ↓ 領域（16/7の箱）を隙間なく埋め尽くす命令 */
-  background-size: cover !important; 
+  
+  /* ↓ 100% から 115% に上げることで、画像を少し大きくします */
+  background-size: 115% auto !important; 
+  
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
 
-/* PCで見るときは、これまで通りの迫力ある表示を維持 */
+/* PC版の設定 */
 @media (min-width: 768px) {
   #about {
     min-height: 55vh !important;
