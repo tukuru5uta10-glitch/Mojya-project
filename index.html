@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -291,67 +290,82 @@ body {
 
 /* ── ACCESS ── */
 #access {
-  display: flex; 
-  flex-direction: row; /* 横並びに固定 */
-  align-items: center; 
-  background: var(--charcoal); 
-  overflow: hidden;
-  position: relative;
-  min-height: 500px;
+  display:flex; flex-direction:column;
+  background:var(--charcoal); overflow:hidden;
+  position:relative;
 }
-
-/* 「Access」という小さなラベルの指定 */
+#access::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:1px;
+  background:linear-gradient(180deg,transparent,var(--teak) 20%,var(--teak) 80%,transparent);
+  opacity:0.3;
+}
+.access-text {
+  display:flex; flex-direction:column; justify-content:center;
+  padding:3.5rem 2rem; position:relative;
+}
+.access-text::before {
+  content:''; position:absolute; top:2rem; right:2rem;
+  width:1px; height:50%;
+  background:linear-gradient(180deg,var(--teak) 0%,transparent 100%);
+}
 .access-label {
-  font-family: 'Cormorant Garamond', serif !important;
-  font-weight: 300 !important; /* 極細にする */
-  font-size: 1.1rem !important; /* 画像のサイズ感に調整 */
-  letter-spacing: 0.35em !important; /* 文字間を広く */
-  color: #886A47 !important; /* 真鍮（チーク）カラー */
-  margin-bottom: 2.5rem;
-  opacity: 1 !important; /* 消えないように1に固定 */
-  text-transform: uppercase;
+  font-family:'Cormorant Garamond',serif !important;
+  font-weight:300 !important;
+  font-size:0.6rem !important;
+  letter-spacing:0.45em !important;
+  color:var(--teak) !important;
+  margin-bottom:2.5rem;
+  opacity:0;
+  text-transform:uppercase;
 }
-
-/* 大きなタイトル（もし使っていれば） */
 .access-title {
-  font-family: 'Cormorant Garamond', serif !important;
-  font-weight: 300 !important;
-  font-size: clamp(2.2rem, 6vw, 3.2rem) !important;
-  letter-spacing: 0.18em !important;
-  color: var(--teak-light) !important;
-  line-height: 1.2;
-  margin-bottom: 2.5rem;
-  opacity: 1 !important;
+  font-family:'Cormorant Garamond',serif !important;
+  font-weight:300 !important;
+  font-size:clamp(2.2rem, 6vw, 3.2rem) !important;
+  letter-spacing:0.18em !important;
+  color:var(--teak-light) !important;
+  line-height:1.2;
+  margin-bottom:2.5rem;
+  opacity:0;
 }
-
 .access-info {
-  opacity: 1 !important;
+  opacity:0;
 }
-
-/* 地図エリアの指定 */
+.access-info-name {
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:300;
+  font-size:0.75rem;
+  letter-spacing:0.25em;
+  color:var(--warm-white);
+  margin-bottom:0.8rem;
+}
+.access-info-addr {
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:300;
+  font-size:0.68rem;
+  letter-spacing:0.15em;
+  color:rgba(196,168,130,0.75);
+  line-height:2;
+  margin-bottom:1.6rem;
+}
+.access-note {
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:300;
+  font-size:0.55rem;
+  letter-spacing:0.12em;
+  color:rgba(250,247,242,0.3);
+  line-height:1.9;
+  border-left:1px solid rgba(139,106,71,0.35);
+  padding-left:0.9rem;
+}
 .access-map {
-  flex: 1.2; /* 右側の地図を少し広く */
-  position: relative;
-  min-height: 450px;
-  overflow: hidden;
+  position:relative;
+  min-height:300px;
+  overflow:hidden;
 }
-
-/* 地図の色味を「エイジング真鍮」にする魔法 */
 .access-map iframe {
-  width: 100%; 
-  height: 100%; 
-  min-height: 450px;
-  border: none; 
-  display: block;
-  /* ここで真鍮エイジング加工 */
-  filter: grayscale(1) sepia(60%) contrast(0.9) brightness(0.8) hue-rotate(15deg);
-}
-
-/* スマホの時は縦に並べる */
-@media (max-width: 768px) {
-  #access { flex-direction: column; }
-  .access-map { width: 100%; min-height: 300px; }
-}
+  width:100%; height:100%; min-height:300px;
+  border:none; display:block;
   /* エイジングゴールド・セピア加工 */
   filter:sepia(0.65) saturate(0.6) brightness(0.72) contrast(1.1) hue-rotate(5deg);
   transition:filter 0.4s ease;
@@ -749,6 +763,9 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
   const aboutEl = document.getElementById('about');
   const aboutBg = window.getComputedStyle(aboutEl).backgroundImage;
   if (aboutBg && aboutBg !== 'none') aboutEl.classList.add('has-photo');
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
