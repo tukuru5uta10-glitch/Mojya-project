@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -227,45 +228,7 @@ body {
   text-shadow: 0 1px 6px rgba(0,0,0,0.8), 0 2px 14px rgba(0,0,0,0.6);
 }
 .about-statement em { font-style:italic; color:var(--teak-light); }
-/* スマホ版の設定（今のいい感じをキープ） */
-#about {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  width: 100% !important;
-  
-  /* スマホ版の領域（上下をカットした状態） */
-  aspect-ratio: 16 / 7 !important; 
-  min-height: auto !important;
-  overflow: hidden; 
-
-  background-image: url('鏝6.png');
-  background-size: 130% auto !important; /* スマホ版の拡大率 */
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-}
-
-/* PC版：画像を強制的に「上に」引き上げる設定 */
-@media (min-width: 768px) {
-  #about {
-    height: 500px !important;
-    min-height: 400px !important;
-    aspect-ratio: auto !important;
-
-    background-image: url('鏝6.png');
-
-    /* 少し拡大して、上下に動かす「のりしろ」を確保します */
-    background-size: 110% auto !important; 
-    
-    /* ↓ ここがポイント！
-       center で左右を真ん中にし、
-       -50px（マイナス）を指定することで画像を上に強制移動させます */
-    background-position: center -160px !important; 
-    
-    background-repeat: no-repeat !important;
-  }
-}}#work { padding:4rem 0; background:var(--cream); }
+#work { padding:4rem 0; background:var(--cream); }
 .texture-header { padding:0 1.8rem 2.5rem; display:flex; justify-content:space-between; align-items:baseline; }
 .section-label { font-size:0.6rem; letter-spacing:0.4em; color:var(--teak); }
 .texture-grid {
@@ -325,6 +288,100 @@ body {
 .profile-title-jp { font-size:0.7rem; letter-spacing:0.3em; color:var(--teak-light); margin-bottom:2rem; opacity:0; }
 .profile-bio { font-size:0.78rem; line-height:2.2; color:rgba(250,247,242,0.5); max-width:320px; opacity:0; }
 .profile-year { margin-top:2rem; font-family:'Cormorant Garamond',serif; font-size:4rem; font-weight:300; color:rgba(196,168,130,0.12); line-height:1; opacity:0; }
+
+/* ── ACCESS ── */
+#access {
+  display:flex; flex-direction:column;
+  background:var(--charcoal); overflow:hidden;
+  position:relative;
+}
+#access::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:1px;
+  background:linear-gradient(180deg,transparent,var(--teak) 20%,var(--teak) 80%,transparent);
+  opacity:0.3;
+}
+.access-text {
+  display:flex; flex-direction:column; justify-content:center;
+  padding:3.5rem 2rem; position:relative;
+}
+.access-text::before {
+  content:''; position:absolute; top:2rem; right:2rem;
+  width:1px; height:50%;
+  background:linear-gradient(180deg,var(--teak) 0%,transparent 100%);
+}
+.access-label {
+  font-family:'Cormorant Garamond',serif !important;
+  font-weight:300 !important;
+  font-size:0.6rem !important;
+  letter-spacing:0.45em !important;
+  color:var(--teak) !important;
+  margin-bottom:2.5rem;
+  opacity:0;
+  text-transform:uppercase;
+}
+.access-title {
+  font-family:'Cormorant Garamond',serif !important;
+  font-weight:300 !important;
+  font-size:clamp(2.2rem, 6vw, 3.2rem) !important;
+  letter-spacing:0.18em !important;
+  color:var(--teak-light) !important;
+  line-height:1.2;
+  margin-bottom:2.5rem;
+  opacity:0;
+}
+.access-info {
+  opacity:0;
+}
+.access-info-name {
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:300;
+  font-size:0.75rem;
+  letter-spacing:0.25em;
+  color:var(--warm-white);
+  margin-bottom:0.8rem;
+}
+.access-info-addr {
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:300;
+  font-size:0.68rem;
+  letter-spacing:0.15em;
+  color:rgba(196,168,130,0.75);
+  line-height:2;
+  margin-bottom:1.6rem;
+}
+.access-note {
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:300;
+  font-size:0.55rem;
+  letter-spacing:0.12em;
+  color:rgba(250,247,242,0.3);
+  line-height:1.9;
+  border-left:1px solid rgba(139,106,71,0.35);
+  padding-left:0.9rem;
+}
+.access-map {
+  position:relative;
+  min-height:300px;
+  overflow:hidden;
+}
+.access-map iframe {
+  width:100%; height:100%; min-height:300px;
+  border:none; display:block;
+  /* エイジングゴールド・セピア加工 */
+  filter:sepia(0.65) saturate(0.6) brightness(0.72) contrast(1.1) hue-rotate(5deg);
+  transition:filter 0.4s ease;
+}
+.access-map iframe:hover {
+  filter:sepia(0.35) saturate(0.8) brightness(0.85) contrast(1.05) hue-rotate(5deg);
+}
+/* 地図の上に薄いゴールドオーバーレイ */
+.access-map::after {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(196,168,130,0.08) 0%, transparent 60%);
+  pointer-events:none;
+}
+
 #contact { min-height:50vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:5rem 2rem; background:var(--warm-white); text-align:center; position:relative; overflow:hidden; }
 #contact::before { content:''; position:absolute; width:480px; height:480px; border-radius:50%; border:1px solid rgba(139,106,71,0.1); top:50%; left:50%; transform:translate(-50%,-50%); }
 #contact::after  { content:''; position:absolute; width:300px; height:300px; border-radius:50%; border:1px solid rgba(139,106,71,0.08); top:50%; left:50%; transform:translate(-50%,-50%); }
@@ -375,6 +432,13 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
   .profile-text::before { top:3rem; right:3rem; height:60%; }
   .profile-label { margin-bottom:3rem; }
   .profile-year { font-size:5rem; margin-top:3rem; }
+  /* ACCESS PC */
+  #access { flex-direction:row; min-height:60vh; }
+  .access-text { flex:1; padding:5rem 4rem; }
+  .access-text::before { top:3rem; right:3rem; height:60%; }
+  .access-label { margin-bottom:3rem; }
+  .access-map { flex:1; min-height:500px; }
+  .access-map iframe { min-height:500px; }
   #contact { padding:7rem 3rem; min-height:55vh; }
   #contact::before { width:600px; height:600px; }
   #contact::after  { width:400px; height:400px; }
@@ -518,7 +582,8 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
   </div>
 </section>
 
-<section id="about">  <div class="about-overlay"></div>
+<section id="about">
+  <div class="about-overlay"></div>
   <div class="about-inner">
     <p class="about-label" id="aboutLabel">ABOUT</p>
     <p class="about-statement" id="aboutStatement">
@@ -537,17 +602,17 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
       <span class="tex-caption">モールテックス / MORTEX</span>
     </div>
     <div class="tex-cell tex-cell-trowel">
-<div class="tex-bg tex-trowel-bg" style="background-image:url('造形.png'); background-size: cover; background-position: center;"></div>
-  <span class="tex-caption">造形 / Decorative Mortar</span>
-</div>
+      <div class="tex-bg tex-trowel-bg" style="background-image:url('造形.png'); background-size:cover; background-position:center;"></div>
+      <span class="tex-caption">造形 / Decorative Mortar</span>
+    </div>
     <div class="tex-cell tex-cell-shikkui">
-  <div class="tex-bg tex-mortex-bg" style="background-image:url('漆喰.png'); background-size: cover; background-position: center;"></div>
-  <span class="tex-caption">漆喰 / SHIKKUI</span>
-</div>
-    <<div class="tex-cell tex-cell-accent">
- <div class="tex-bg tex-accent-bg" style="background-image:url('素材.png'); background-size: cover; background-position: center;"></div>
-  <span class="tex-caption accent-caption">素材と対話する</span>
-</div>
+      <div class="tex-bg tex-mortex-bg" style="background-image:url('漆喰.png'); background-size:cover; background-position:center;"></div>
+      <span class="tex-caption">漆喰 / SHIKKUI</span>
+    </div>
+    <div class="tex-cell tex-cell-accent">
+      <div class="tex-bg tex-accent-bg" style="background-image:url('素材.png'); background-size:cover; background-position:center;"></div>
+      <span class="tex-caption accent-caption">素材と対話する</span>
+    </div>
   </div>
 </section>
 
@@ -567,6 +632,35 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
   </div>
 </section>
 
+<!-- ── ACCESS ── -->
+<section id="access">
+  <div class="access-text">
+    <p class="access-label" id="accessLabel">Access</p>
+    <h2 class="access-title" id="accessTitle">中元工房</h2>
+    <div class="access-info" id="accessInfo">
+      <p class="access-info-name">pwnk — Osaka</p>
+      <p class="access-info-addr">
+        〒591-xxxx<br>
+        大阪府堺市北区百舌鳥赤畑町
+      </p>
+      <p class="access-note">
+        当工房は出張施工専門のため、<br>
+        詳細な住所・駐車場等のご案内は<br>
+        ご予約確定後にお伝えしております。
+      </p>
+    </div>
+  </div>
+  <div class="access-map">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3283.4!2d135.505!3d34.558!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6000f3d5b0d4e6e1%3A0x1!2z5aSn6Ziq5bqc5aGU5biC5YyX5Yy65aSn6Ziq5Lyd55Gr55S677yR5LiB55uu!5e0!3m2!1sja!2sjp!4v1"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="中元工房 アクセスマップ">
+    </iframe>
+  </div>
+</section>
+
 <section id="contact">
   <p class="contact-label" id="contactLabel">CONTACT</p>
   <h2 class="contact-headline" id="contactHeadline">あなたの壁に、<br>物語を。</h2>
@@ -580,10 +674,10 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
 
 <footer>
   <div class="footer-logo">pwnk</div>
-<p class="footer-copy">
-            &copy; 2026 Ryuzou Nakamoto. All rights reserved.<br>
-            <span style="font-size: 0.8em; opacity: 0.5;">堺市（堺区・北区・西区・中区・東区・美原区・南区）和泉市・高石市・大阪狭山市・河内長野市・松原市・羽曳野市・富田林市ほか大阪全域。</span>
-        </p>
+  <p class="footer-copy">
+    &copy; 2026 Ryuzou Nakamoto. All rights reserved.<br>
+    <span style="font-size:0.8em; opacity:0.5;">堺市（堺区・北区・西区・中区・東区・美原区・南区）和泉市・高石市・大阪狭山市・河内長野市・松原市・羽曳野市・富田林市ほか大阪全域。</span>
+  </p>
 </footer>
 
 <script>
@@ -657,6 +751,11 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
   ['#profileLabel','#profileName','#profileTitleJp','#profileBio','#profileYear'].forEach((id, i) => {
     gsap.to(id, { opacity:1, scrollTrigger:{ trigger:'#profile', start:'top 70%' }, duration:0.9, delay:i*0.18, ease:'power3.out' });
   });
+
+  /* Access アニメーション */
+  gsap.to('#accessLabel', { opacity:1, scrollTrigger:{ trigger:'#access', start:'top 75%' }, duration:0.8, delay:0.1 });
+  gsap.to('#accessTitle', { opacity:1, scrollTrigger:{ trigger:'#access', start:'top 70%' }, duration:1.0, delay:0.3 });
+  gsap.to('#accessInfo',  { opacity:1, scrollTrigger:{ trigger:'#access', start:'top 65%' }, duration:0.9, delay:0.5 });
 
   gsap.to('#contactLabel',    { opacity:1, scrollTrigger:{ trigger:'#contact', start:'top 75%' }, duration:0.8, delay:0.1 });
   gsap.to('#contactHeadline', { opacity:1, scrollTrigger:{ trigger:'#contact', start:'top 70%' }, duration:1.0, delay:0.3 });
