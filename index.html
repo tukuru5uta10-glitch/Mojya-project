@@ -8,7 +8,7 @@
 <meta name="description" content="大阪府堺市で漆喰塗りや左官工事をお探しなら中元工房（PWNK）へ。モールテックスや和漆喰、珪藻土など素材の魅力を活かした職人直営の施工をご提案。1級左官技能士として29年の実績で、質の高い仕上げをお約束します。">
 <meta name="keywords" content="左官, 堺市, 大阪, モールテックス, 漆喰, 塗り壁, 1級建築施工管理技士, PWNK, パンク">
 <meta property="og:site_name" content="中元工房（PWNK）">
-<link rel="icon" href="favicon.ico">
+<link rel="icon" href="images/pwnk-official-logo-square.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
@@ -278,7 +278,7 @@ body {
 .profile-hand::after { content:''; position:absolute; bottom:0; left:0; right:0; height:60%; background:linear-gradient(0deg,rgba(44,44,44,0.7) 0%,transparent 100%); }
 .profile-photo {
   position:absolute; inset:0;
-  background-image:url('プロフィール.JPG');
+  background-image:url('images/osaka-sakai-plaster-pwnk.JPG');
   background-size:cover; background-position:center 20%;
   filter:brightness(0.65) contrast(1.08) saturate(0.75);
 }
@@ -559,11 +559,13 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
   <nav class="fs-nav">
     <button data-target="hero">TOP</button>
     <div class="fs-rule"></div>
-    <button data-target="profile">PROFILE</button>
+    <button data-target="about">TEXTURE & MATERIAL</button>
     <div class="fs-rule"></div>
-    <button data-target="work">WORK</button>
+    <button data-target="work">WORKS</button>
     <div class="fs-rule"></div>
-    <button data-target="contact">CONTACT</button>
+    <button data-target="profile">ABOUT</button>
+    <div class="fs-rule"></div>
+    <button data-target="access">LOCATION</button>
   </nav>
 </div>
 
@@ -583,10 +585,10 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
   </div>
 </section>
 
-<section id="about" class="has-photo" style="background-image:url('鏝6.png');">
+<section id="about" class="has-photo" style="background-image:url('images/professional-plastering-tools-collection.png');">
   <div class="about-overlay"></div>
   <div class="about-inner">
-    <p class="about-label" id="aboutLabel">ABOUT</p>
+    <p class="about-label" id="aboutLabel">TEXTURE &amp; MATERIAL</p>
     <p class="about-statement" id="aboutStatement">
       <em>語る壁に応える鏝。</em>
     </p>
@@ -595,23 +597,23 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
 
 <section id="work">
   <div class="texture-header">
-    <span class="section-label">TEXTURE &amp; MATERIAL</span>
+    <span class="section-label">WORKS</span>
   </div>
   <div class="texture-grid">
     <div class="tex-cell tex-cell-mortex">
-      <div class="tex-bg tex-plaster-bg" style="background-image:url('モールテックス.png')"></div>
+      <div class="tex-bg tex-plaster-bg" style="background-image:url('images/mortex-finish-osaka-sakai.png')"></div>
       <span class="tex-caption">モールテックス / MORTEX</span>
     </div>
     <div class="tex-cell tex-cell-trowel">
-      <div class="tex-bg tex-trowel-bg" style="background-image:url('造形.png'); background-size:cover; background-position:center;"></div>
+      <div class="tex-bg tex-trowel-bg" style="background-image:url('images/mortar-sculpture-aging-tile-style-osaka-sakai.png'); background-size:cover; background-position:center;"></div>
       <span class="tex-caption">造形 / Decorative Mortar</span>
     </div>
     <div class="tex-cell tex-cell-shikkui">
-      <div class="tex-bg tex-mortex-bg" style="background-image:url('漆喰.png'); background-size:cover; background-position:center;"></div>
+      <div class="tex-bg tex-mortex-bg" style="background-image:url('images/shikkui-plaster-finish-osaka-sakai.png'); background-size:cover; background-position:center;"></div>
       <span class="tex-caption">漆喰 / SHIKKUI</span>
     </div>
     <div class="tex-cell tex-cell-accent">
-      <div class="tex-bg tex-accent-bg" style="background-image:url('素材.png'); background-size:cover; background-position:center;"></div>
+      <div class="tex-bg tex-accent-bg" style="background-image:url('images/natural-plaster-material-powder.png'); background-size:cover; background-position:center;"></div>
       <span class="tex-caption accent-caption">素材と対話する</span>
     </div>
   </div>
@@ -623,7 +625,7 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
     <div class="profile-photo"></div>
   </div>
   <div class="profile-text">
-    <p class="profile-label" id="profileLabel">Plastering artisan</p>
+    <p class="profile-label" id="profileLabel">ABOUT</p>
     <h2 class="profile-name" id="profileName">Ryuzou<br>Nakamoto</h2>
     <p class="profile-title-jp" id="profileTitleJp">左官職人 — 一級技能士</p>
     <p class="profile-bio" id="profileBio">
