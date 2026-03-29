@@ -453,6 +453,90 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
   .hero-title { font-size:clamp(5rem, 8vw, 6rem); }
   .sns-fixed { right:2rem; }
 }
+  /* MATERIALセクション限定：ボタンとチラの色を白に変更 */
+#about .more-btn {
+  color: #9e8d7e !important;
+}
+
+#about .more-btn span {
+  border-bottom: 1px solid #9e8d7e !important;
+}
+
+#about .more-btn::after {
+  color: #9e8d7e !important;
+}
+
+#about .more-btn:hover {
+  opacity: 0.7 !important;
+}
+/* ── リンクボタン（peek + チラ版） ── */
+.more-btn {
+  display: inline-block !important;
+  width: fit-content !important;
+  margin-top: 1.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--teak) !important;
+  text-decoration: none !important;
+  /* ↓ ここにあった border-bottom を削除 ↓ */
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 100;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* 「peek」の文字だけに下線を引く */
+.more-btn span {
+  border-bottom: 1px solid var(--teak) !important;
+  padding-bottom: 0.3rem;
+  display: inline-block;
+}
+
+/* 顔文字の設定（変更なし：そのまま） */
+.more-btn::after {
+  content: "|ω･)ﾁﾗ";
+  font-size: 0.8rem;
+  letter-spacing: normal;
+  display: inline-block;
+  margin-left: 0.5rem;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  /* ↓ ここに border-bottom: none !important; を念のため追加 */
+  border-bottom: none !important; 
+}
+
+.more-btn:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+}
+  /* 【重要】色をロゴと同じ「テーク色」に指定 */
+  color: var(--teak) !important; 
+  text-decoration: none;
+  border-bottom: 1px solid var(--teak) !important; /* 下線も同じ色 */
+  
+  padding-bottom: 0.3rem;
+  transition: all 0.3s ease;
+  
+  /* 透明度を1にして確実に見えるように */
+  opacity: 1 !important; 
+  visibility: visible !important;
+
+  position: relative;
+  z-index: 100;
+  left: 0;
+  transform: none;
+  margin-left: 0;
+}
+
+.more-btn:hover {
+  /* ホバーした時は少しだけ明るくするか、不透明度を下げる */
+  opacity: 0.7 !important;
+  border-bottom: 1px solid var(--teak-light) !important;
+}
 </style>
 <script type="application/ld+json">
 {
@@ -556,16 +640,16 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
 </div>
 
 <div id="fs-menu" role="dialog" aria-modal="true" aria-label="ナビゲーション">
-  <nav class="fs-nav">
-    <button data-target="hero">TOP</button>
+ <nav class="fs-nav">
+    <button onclick="window.location.href='index.html'">TOP</button>
     <div class="fs-rule"></div>
-    <button data-target="about">TEXTURE & MATERIAL</button>
+    <button onclick="window.location.href='material.html'">TEXTURE & MATERIAL</button>
     <div class="fs-rule"></div>
-    <button data-target="work">WORKS</button>
+    <button onclick="window.location.href='works.html'">WORKS</button>
     <div class="fs-rule"></div>
-    <button data-target="profile">ABOUT</button>
+    <button onclick="window.location.href='about.html'">ABOUT</button>
     <div class="fs-rule"></div>
-    <button data-target="access">LOCATION</button>
+    <button onclick="window.location.href='location.html'">LOCATION</button>
   </nav>
 </div>
 
@@ -592,12 +676,14 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
     <p class="about-statement" id="aboutStatement">
       <em>語る壁に応える鏝。</em>
     </p>
+     <a href="material.html" class="more-btn" style="opacity: 1 !important;"><span>peek</span></a>
   </div>
 </section>
 
 <section id="work">
   <div class="texture-header">
     <span class="section-label">WORKS</span>
+    <a href="works.html" class="more-btn" style="margin-top:0;"><span>peek</span></a>
   </div>
   <div class="texture-grid">
     <div class="tex-cell tex-cell-mortex">
@@ -639,6 +725,7 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
 追求するのは、手仕事の温度を感じる、おしゃれで唯一無二の空間体験。
 住宅から商業施設まで、妥協なきクラフトマンシップが、年月を重ねるほどに愛着が深まる風景を塗り上げる。
     </p>
+     <a href="about.html" class="more-btn"><span>peek</span></a>
     <div class="profile-year" id="profileYear"><span style="font-size:1.2rem; letter-spacing:0.2em;">since</span> 1998</div>
   </div>
 </section>
@@ -658,6 +745,7 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
         工事に関するご相談は<br>
         公式ラインよりご連絡くださいませ。
       </p>
+      <a href="location.html" class="more-btn"><span>peek</span></a>
     </div>
   </div>
   <div class="access-map">
@@ -753,12 +841,15 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
   /* GSAP */
   gsap.to('#aboutLabel',     { opacity:1, scrollTrigger:{ trigger:'#about',   start:'top 75%' }, duration:0.8, delay:0.1 });
   gsap.to('#aboutStatement', { opacity:1, scrollTrigger:{ trigger:'#about',   start:'top 70%' }, duration:1.2, delay:0.4 });
+  // 【追加①】MATERIALセクションのボタン用
+  gsap.to('#about .more-btn', { opacity:1, scrollTrigger:{ trigger:'#about', start:'top 70%' }, duration:1.2, delay:0.6 });
 
   gsap.utils.toArray('.tex-cell').forEach((el, i) => {
     gsap.to(el, { opacity:1, y:0, scrollTrigger:{ trigger:'#work', start:'top 80%' }, duration:0.9, delay:i*0.15, ease:'power3.out' });
   });
 
-  ['#profileLabel','#profileName','#profileTitleJp','#profileBio','#profileYear'].forEach((id, i) => {
+  // 【変更②】ABOUTセクション用（配列の最後に '#profile .more-btn' を足しました）
+  ['#profileLabel','#profileName','#profileTitleJp','#profileBio','#profileYear', '#profile .more-btn'].forEach((id, i) => {
     gsap.to(id, { opacity:1, scrollTrigger:{ trigger:'#profile', start:'top 70%' }, duration:0.9, delay:i*0.18, ease:'power3.out' });
   });
 
@@ -766,6 +857,8 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
   gsap.to('#accessLabel', { opacity:1, scrollTrigger:{ trigger:'#access', start:'top 75%' }, duration:0.8, delay:0.1 });
   gsap.to('#accessTitle', { opacity:1, scrollTrigger:{ trigger:'#access', start:'top 70%' }, duration:1.0, delay:0.3 });
   gsap.to('#accessInfo',  { opacity:1, scrollTrigger:{ trigger:'#access', start:'top 65%' }, duration:0.9, delay:0.5 });
+  // 【追加③】LOCATIONセクションのボタン用
+  gsap.to('#access .more-btn', { opacity:1, scrollTrigger:{ trigger:'#access', start:'top 65%' }, duration:0.9, delay:0.7 });
 
   gsap.to('#contactLabel',    { opacity:1, scrollTrigger:{ trigger:'#contact', start:'top 75%' }, duration:0.8, delay:0.1 });
   gsap.to('#contactHeadline', { opacity:1, scrollTrigger:{ trigger:'#contact', start:'top 70%' }, duration:1.0, delay:0.3 });
