@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XVF64B0WWZ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-XVF64B0WWZ');
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WORKS | PWNK</title>
@@ -33,7 +24,8 @@ body {
   font-weight:400;
   overflow-x:hidden;
 }
-/* ヘッダー＆メニュー：TOPと100%共通 */
+
+/* ── ヘッダー＆メニュー周り（ベースコードそのまま） ── */
 .nav-logo {
   position:fixed; top:0; left:0; right:0; z-index:200;
   display:flex; justify-content:center; align-items:center;
@@ -119,7 +111,7 @@ body {
 #fs-menu.is-open .fs-nav button:nth-child(7) { animation-delay:0.50s; }
 @keyframes fsIn { to { opacity:1; transform:translateY(0); } }
 
-/* ── 子ページ専用ミニヒーロー（TOPのオーロラを継承） ── */
+/* ── ページヒーロー ── */
 #page-hero {
   height:40svh; min-height:300px;
   position:relative; display:flex; align-items:center; justify-content:center;
@@ -136,103 +128,169 @@ body {
   50% { transform:translate(-5%,5%) skew(1deg,2deg) scaleX(1.05); opacity:0.85;}
 }
 .page-title-main {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  font-family: 'Noto Sans JP', sans-serif !important;
-  font-weight: 900 !important;
-  line-height: 0.8 !important; /* 密着 */
-  color: var(--warm-white);
-  text-transform: uppercase;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0;
-  white-space: nowrap;
+  position: relative; z-index: 2; text-align: center;
+  font-family: 'Noto Sans JP', sans-serif !important; font-weight: 900 !important;
+  line-height: 0.8 !important; color: var(--warm-white);
+  text-transform: uppercase; display: flex; flex-direction: column;
+  align-items: center; margin: 0; white-space: nowrap;
 }
-
 .page-title-main span {
-  display: block;
-  /* ★ここをマイナスに！文字同士の隙間を消して「壁」にします */
-  letter-spacing: 0.1em ; 
-  transform: scaleX(0.85);
-  transform-origin: center;
+  display: block; letter-spacing: 0.1em ; 
+  transform: scaleX(0.85); transform-origin: center;
+}
+.title-top { font-size: clamp(1rem, 9.5vw, 6rem) !important; letter-spacing: 0.06em !important; }
+.title-bottom { font-size: clamp(1rem, 12vw, 7rem) !important; margin-top: -0.15em; }
+
+/* ── MATRIX ギャラリー（枠なし・軸線主役版） ── */
+.matrix-section { 
+  padding: 4rem 2rem; 
+  position: relative; 
+  max-width: 1400px; 
+  margin: 0 auto; 
 }
 
-/* 5. 【両端を揃えるためのサイズ調整】 */
-.title-top {
-  /* TROWELLED(9文字): 下段より少し小さく絞って幅を合わせる */
-  font-size: clamp(1rem, 9.5vw, 6rem) !important;
+.matrix-canvas {
+  position: relative;
+  width: 100%;
+  height: 85vh; 
+  background: transparent; /* 背景色を透明にして馴染ませる */
+  overflow: visible; /* サムネが拡大したときに見切れないようにする */
+}
+
+/* 十字の軸線 */
+.axis-line-x, .axis-line-y {
+  position: absolute;
+  background: var(--teak);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 50; /* ★ここを50くらいに上げる（サムネは10なのでそれより大きく） */
+}/* 横軸（X軸）の太さ */
+.axis-line-x {
+  width: 95%;
+  height: 1px;             /* ★1pxから2pxに太くする */
+  top: 50%;
+  left: 2.5%;
+  transform: translateY(-50%);
+}
+
+/* 縦軸（Y軸）の太さ */
+.axis-line-y {
+  width: 1.5px;              /* ★ここが細かったはず！2pxに揃える */
+  height: 95%;
+  left: 50%;
+  top: 3%;
+  transform: translateX(-50%);
+}
+
+/* 軸ラベル（白抜き背景で読みやすく） */
+.axis-label {
+  position: absolute;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--teak);
+  padding: 0.2rem 0.6rem;
+  z-index: 60;/* ★ここを軸線よりさらに高い60にする */
+  white-space: nowrap; /* 改行防止 */
+  font-weight: 500;    /* 背景がない分、少しだけ太くして視認性を確保 */
+}
   
-  /* ★この数値を触ります！ */
-  /* マイナス値を大きくするほど、文字が重なり合って狭くなります */
-  letter-spacing: 0.06em !important;
+.label-top { top: 0; left: 50%; transform: translateX(-50%); }
+.label-bottom { bottom: 0; left: 50%; transform: translateX(-50%); }
+/* 左（High-tech）を端へ */
+.label-left { top: 50%; left: -3.5rem; transform: translateY(-50%) rotate(-90deg); transform-origin: center; }
+/* 右（Organic）を端へ */
+.label-right { top: 50%; right: -3rem; transform: translateY(-50%) rotate(90deg); transform-origin: center; }
+  
+/* 丸いサムネイル本体 */
+.project-dot {
+  position: absolute;
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  cursor: pointer;
+
+  /* 1. 位置を中央に固定 */
+  transform: translate(-50%, -50%); 
+  /* 2. 拡大の基準点を中心にする */
+  transform-origin: center; 
+
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s;
+  z-index: 10;
 }
 
-.title-bottom {
-  /* ARCHIVES(8文字): 1文字少ない分、大きくして土台にする */
-  font-size: clamp(1rem, 12vw, 7rem) !important;
-  /* 食い込みを少し深くして、1つのロゴのように見せる */
-  margin-top: -0.15em; 
+/* ホバー時 */
+.project-dot:hover {
+  /* 3. translateを維持したままscaleだけ大きくする */
+  transform: translate(-50%, -50%) scale(1.4) !important;
+  z-index: 100;
+  border-color: var(--teak-light);
 }
 
-/* スマホ版 */
-@media (max-width: 768px) {
-  .page-title-main {
-    line-height: 0.65 !important;
-  }
-  .page-title-main span {
-    letter-spacing: 0.05em !important; 
-    transform: scaleX(0.85); 
-  }
-  /* ここから追加：文章エリアの調整 */
-  .content-section {
-    padding: 4rem 1.5rem; /* 左右の余白を少し詰めて、中央に密度を作る */
-    text-align: justify;  /* 文末を揃えてブロックとしての美しさを出す */
-  }
-  .content-label {
-    font-size: 0.45rem !important;    /* ラベルをさらに小さくして、情報の対比を強める */
-    letter-spacing: 0.01em !important; 
-    margin-bottom: 1.5rem;
-  }
-  .content-p {
-    font-size: 0.45rem !important;    /* 文字をあえて小さくし、余白の価値を上げる */ 
-    line-height: -1.0;      /* 行間 */
-    color: rgba(44, 44, 44, 0.7); /* 黒を少し薄めて、高級感を出す */
-    letter-spacing: -0.05em;
-  }
+/* 吹き出しタイトル（③サムネにカーソル合わせるとホバー） */
+.project-dot::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--charcoal);
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, bottom 0.3s;
 }
-/* ── 自由編集コンテンツエリア ── */
-/* 229行目付近：OUTLINEなどの小見出し */
-.content-label { 
-  font-size:0.85rem !important; 
-  letter-spacing:-0.01em !important;  /* 元の0.4emからガッツリ詰めました */
-  color:var(--teak); 
-  margin-bottom:1rem; 
-  display:block;
-}
-
-/* 230行目付近：本文 */
-.content-p { 
-  font-size:0.65rem !important; 
-  line-height:2.2; 
-  color:rgba(44,44,44,0.8); 
-  margin-bottom:2rem; 
-  letter-spacing: -0.03em !important; /* ★これを追加（マイナス値で文字間が詰まります） */
-}
-
+.project-dot:hover::after { opacity: 1; bottom: -50px; }
+  
 footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; }
 .footer-logo { font-family:'Noto Sans JP',sans-serif; font-weight:100; font-size:0.75rem; letter-spacing:0.4em; color:rgba(196,168,130,0.35); }
 .footer-copy { font-size:0.5rem; letter-spacing:0.15em; color:rgba(250,247,242,0.2); }
+  
+/* スマホ版（画面幅768px以下）の調整 */
+@media (max-width: 768px) {
+  /* サムネイルをひと回り小さくして密集を回避 */
+  .project-dot {
+    width: 30px;  /* 80pxから40pxに */
+    height: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15); /* 影も少し軽めに */
+  }
 
-@media (min-width: 768px) {
-  .afro-btn { top:1rem; left:1.6rem; padding:0; }
-  .afro-svg { width:50px; height:56px; }
-  .afro-menu-label { font-size:0.62rem; }
-  .sns-fixed { top:1.3rem; right:1.8rem; gap:1.2rem; }
-  .sns-fixed svg { width:30px; height:30px; }
-  .content-section { padding: 8rem 4rem; }
+  /* 軸ラベルの位置を少し外側に逃がして重なりを防ぐ */
+  .axis-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    padding: 0.1rem 0.3rem;
+  }
+  
+  /* 縦軸のラベル（Smooth / Textured）を端に寄せる */
+  .axis-label[style*="top: 2%"], 
+  .axis-label[style*="bottom: 2%"] {
+    transform: translateX(-50%) translateY(0);
+  }
 }
+
+/* モーダル用のCSS（ここを追加） */
+#modalClose {
+  transition: all 0.3s;
+}
+#modalClose:hover {
+  background: #fff;
+  color: #000;
+}
+/* 画像表示中にスクロールを止めるクラス */
+body.modal-open {
+  overflow: hidden;
+}
+
+</style>
 </style>
 </head>
 <body>
@@ -314,24 +372,32 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
 </h1>
 </section>
 
-<section class="content-section">
-  <span class="content-label" id="fadeLabel">ARCHIVE_TYPE: TACTILE_SURFACE</span>
-  <p class="content-p" id="fadeParagraph">
-    漆喰、モールテックス、モルタル、ジョリパット、聚楽、珪藻土、造形、版築、etc.<br>
-    コテ一つで描かれるテクスチャは、二度と同じものは生まれない表現の記録です。<br>
-    30年の施工現場で刻んできた『手の痕跡』を、施工事例として体系化しています。<br>
-    素材と対話し、空間を定義してきたPWNKの軌跡を、まもなく公開いたします。
-  </p>
+<section class="matrix-section">
+  <div class="matrix-canvas" id="matrixCanvas">
+    <div class="axis-line-x"></div>
+    <div class="axis-line-y"></div>
+    
+    <div class="axis-label label-top">Smooth (平滑)</div>
+    <div class="axis-label label-bottom">Textured (質感)</div>
+    <div class="axis-label label-left">High-tech (機能)</div>
+    <div class="axis-label label-right">Organic (素材)</div>
+  </div>
 </section>
 
+  <div id="imageModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; flex-direction:column;">
+  <img id="modalImg" src="" style="max-width:90%; max-height:75vh; object-fit:contain; box-shadow:0 0 40px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1);">
+  <button id="modalClose" style="margin-top:2.5rem; background:none; border:1px solid #fff; color:#fff; padding:0.8rem 2.5rem; cursor:pointer; letter-spacing:0.3em; font-size:0.75rem; font-family:'Noto Sans JP', sans-serif; transition: 0.3s;">BACK</button>
+</div>
+  
 <footer>
   <div class="footer-logo">pwnk</div>
   <p class="footer-copy">© 2026 Ryuzou Nakamoto. All rights reserved.</p>
 </footer>
 
 <script>
-  gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger);
 
+  /* メニュー処理等（既存のまま） */
   const btn  = document.getElementById('afroBtn');
   const menu = document.getElementById('fs-menu');
   let menuOpen = false;
@@ -343,14 +409,9 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
     btn.setAttribute('aria-label', menuOpen ? 'メニューを閉じる' : 'メニューを開く');
     document.body.style.overflow = menuOpen ? 'hidden' : '';
   }
-
   btn.addEventListener('click', () => toggleMenu(!menuOpen));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && menuOpen) toggleMenu(false); });
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && menuOpen) toggleMenu(false);
-  });
-
-  /* サングラス、インスタグラムのホバー */
   const sunglasses = document.getElementById('gSunglasses');
   btn.addEventListener('mouseenter', () => { if (!menuOpen) sunglasses.style.opacity = '1'; });
   btn.addEventListener('mouseleave', () => { sunglasses.style.opacity = '0'; });
@@ -359,9 +420,89 @@ footer { padding:1.8rem; background:var(--charcoal); display:flex; justify-conte
   igBtn.addEventListener('mouseenter', () => igPath.setAttribute('fill','url(#igGrad)'));
   igBtn.addEventListener('mouseleave', () => igPath.setAttribute('fill','#C4A882'));
 
-  /* ページ内でのフワッと現れる演出を100%踏襲 */
-  gsap.from('#fadeLabel', { opacity: 0, y: 20, duration: 0.8, delay: 0.2, ease: 'power3.out' });
-  gsap.from('#fadeParagraph', { opacity: 0, y: 20, duration: 0.8, delay: 0.5, ease: 'power3.out' });
+ /* -----------------------------------------------------------
+      MATRIX GALLERY SCRIPT (浮遊アニメーション & クリック対応)
+     ----------------------------------------------------------- */
+
+ const projects = [
+    { title: "MISONOYA様 門塀", img: "images/works/mortex-kishiwada-shop-exterior-entrance-wall.jpg", x: -35, y: -5 },
+    { title: "堺市 YZ様邸 LDK漆喰", img: "images/works/shikkui-sakai-private-interior-ldk.jpg", x: 40, y: -35 },
+    { title: "アクセント壁 モルタル造形", img: "images/works/mortar-decorative-region-shop-interior-accent-wall.jpg", x: 26, y: 30 },
+    { title: "堺市 AZ様邸 LDK漆喰", img: "images/works/shikkui-mortex-sakai-private-interior-ldk.jpg", x: 25, y: -30 },
+    { title: "堺市 AZ様邸 階段モールテックス", img: "images/works/shikkui-mortex-sakai-private-interior-staircase.jpg", x: -30, y: -15 },
+    { title: "葛城市 MM様邸 LDK墨モルタル", img: "images/works/shikkui-mortex-ink-mortar-katuragi-private-interior-ldk.jpg", x: -10, y: 0 },
+    { title: "某邸 門柱 特殊仕上げ", img: "images/works/pwnk-region-private-exterior-gatepost.jpg", x: 10, y: 35 },
+    { title: "一菜一縁よころ様 ファサード", img: "images/works/jolypate-osaka-shop-exterior-facade.jpg", x: -25, y: 20 },
+    { title: "一菜一縁よころ様 店内壁", img: "images/works/jolypate-osaka-shop-interior-wall.jpg", x: -20, y: 15 },
+    { title: "生駒市 YH様邸 洗面漆喰", img: "images/works/shikkui-ikoma-private-interior-washroom.jpg", x: 35, y: -38 },
+    { title: "生駒市 YH様邸 LDKアクセント", img: "images/works/shikkui-decorative-ikoma-private-interior-ldk-accent-wall.jpg", x: 35, y: 25 },
+    { title: "TRUFFLE DONUT様 什器", img: "images/works/mortex-region-shop-interior-furniture.jpg", x: -30, y: -40 },
+    { title: "某店 土間仕上げ", img: "images/works/pwnk-region-shop-interior-doma.jpg", x: 6, y: 28 },
+    { title: "鼓道様 店内壁", img: "images/works/jyuraku-toyonaka-shop-interior-wall.jpg", x: 8, y: 10 },
+    { title: "鼓道様 アートウォール", img: "images/works/art-wall-toyonaka-shop-interior-wall.jpg", x: -12, y: 35 },
+    { title: "某邸 外壁ジョリパット", img: "images/works/jolypate-region-private-exterior-wall.jpg", x: -15, y: 10 },
+    { title: "泉大津市 某邸 LDK", img: "images/works/mortex-shikkui-izumiotu-private-interior-ldk.jpg", x: 0, y: -40 },
+    { title: "京都市 azurer様　看板モルタル造形", img: "images/works/mortar-decorative-kyoto-shop-exterior-signboard.jpg", x:1, y: 22 },
+    { title: "藤井寺市 KG様邸 LDKモールテックス", img: "images/works/mortex-shikkui-fujiidera-private-interior-ldk.jpg", x: 5, y: -23 },
+    { title: "藤井寺市 KG様邸 洗面モールテックス", img: "images/works/mortex-shikkui-fujiidera-private-interior-washroom.jpg", x: -38, y: -30 },
+    { title: "奈良市 書斎 珪藻土", img: "images/works/keisoudo-nara-private-interior-studyroom.jpg", x: 40, y: -20 }
+  ];
+
+  const canvas = document.getElementById('matrixCanvas');
+
+  // ふわふわアニメーションの関数（完全ランダム・超低速）
+  function randomFloat(element) {
+    gsap.to(element, {
+      x: (Math.random() - 0.5) * 20, // ±2px以内
+      y: (Math.random() - 0.5) * 20, // ±2px以内
+      duration: Math.random() * 5 + 2, // 8秒〜13秒かけて移動
+      ease: "sine.inOut",
+      onComplete: () => randomFloat(element)
+    });
+  }
+
+  projects.forEach((proj, index) => {
+    const dot = document.createElement('div');
+    dot.className = 'project-dot';
+    dot.setAttribute('data-title', proj.title);
+    dot.style.backgroundImage = `url(${proj.img})`;
+    
+    // 配置
+    gsap.set(dot, {
+      left: (50 + proj.x) + "%",
+      top: (50 + proj.y) + "%",
+      scale: 0
+    });
+
+    // 出現
+    gsap.to(dot, {
+      scale: 1,
+      duration: 0.8,
+      delay: index * 0.05,
+      ease: "back.out(1.7)"
+    });
+
+    // 浮遊開始
+    randomFloat(dot);
+
+    // 画像クリックでモーダル表示（ここを差し替え）
+    dot.addEventListener('click', (e) => {
+      e.stopPropagation(); // 浮遊アニメーションへの影響を防ぐ
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImg');
+      
+      modalImg.src = proj.img; // クリックした画像のパスを入れる
+      modal.style.display = 'flex'; // 表示する
+      document.body.classList.add('modal-open'); // 背後のスクロールを止める
+    });
+
+    canvas.appendChild(dot);
+  });
+  // BACKボタンでモーダルを閉じる処理
+  document.getElementById('modalClose').addEventListener('click', () => {
+    document.getElementById('imageModal').style.display = 'none';
+    document.body.classList.remove('modal-open'); // スクロールを再開
+  });
 </script>
 
 </body>
